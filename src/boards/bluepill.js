@@ -9,8 +9,9 @@ export const BluePillBoard = {
   name: "STM32F103C8 — Blue Pill",
   mcu: "STM32F103C8T6",
   core: "ARM Cortex-M3",
-  width: 1100,
-  height: 470,
+  image: "/images/bluePill.png",
+  width: 1774,
+  height: 887,
   pins: PINS,
   components: COMPONENTS,
   // On-board LED, handy for the default example.

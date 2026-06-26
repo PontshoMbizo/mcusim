@@ -1,155 +1,103 @@
 [
   {
-    "id": "VBAT",
-    "label": "VBAT",
-    "name": "VBAT",
+    "id": "5V",
+    "label": "5V",
+    "name": "5V",
     "special": [],
     "kind": "pwr",
     "layer": "POWER",
     "side": "TOP",
-    "x": 150,
-    "y": 64
+    "x": 55,
+    "y": 262
   },
   {
-    "id": "PC13",
-    "label": "PC13",
-    "name": "PC13",
+    "id": "GND",
+    "label": "GND",
+    "name": "GND",
+    "special": [],
+    "kind": "gnd",
+    "layer": "POWER",
+    "side": "TOP",
+    "x": 142,
+    "y": 262
+  },
+  {
+    "id": "3V3",
+    "label": "3V3",
+    "name": "3V3",
+    "special": [],
+    "kind": "pwr",
+    "layer": "POWER",
+    "side": "TOP",
+    "x": 228,
+    "y": 262
+  },
+  {
+    "id": "RESET",
+    "label": "RESET",
+    "name": "RESET",
+    "special": [],
+    "kind": "rst",
+    "layer": "POWER",
+    "side": "TOP",
+    "x": 315,
+    "y": 262
+  },
+  {
+    "id": "PB11",
+    "label": "PB11",
+    "name": "PB11",
     "special": [
-      "LED",
-      "TAMPER"
+      "I2C2_SDA",
+      "USART3_RX"
     ],
     "kind": "io",
     "layer": "IO",
     "side": "TOP",
-    "x": 191,
-    "y": 64
+    "x": 402,
+    "y": 262
   },
   {
-    "id": "PC14",
-    "label": "PC14",
-    "name": "PC14",
+    "id": "PB10",
+    "label": "PB10",
+    "name": "PB10",
     "special": [
-      "OSC32_IN"
+      "I2C2_SCL",
+      "USART3_TX"
     ],
     "kind": "io",
     "layer": "IO",
     "side": "TOP",
-    "x": 233,
-    "y": 64
+    "x": 489,
+    "y": 262
   },
   {
-    "id": "PC15",
-    "label": "PC15",
-    "name": "PC15",
+    "id": "PB1",
+    "label": "PB1",
+    "name": "PB1",
     "special": [
-      "OSC32_OUT"
+      "ADC9",
+      "TIM3_CH4"
     ],
     "kind": "io",
     "layer": "IO",
     "side": "TOP",
-    "x": 274,
-    "y": 64
+    "x": 575,
+    "y": 262
   },
   {
-    "id": "PA0",
-    "label": "PA0",
-    "name": "PA0",
+    "id": "PB0",
+    "label": "PB0",
+    "name": "PB0",
     "special": [
-      "ADC0",
-      "TIM2_CH1"
+      "ADC8",
+      "TIM3_CH3"
     ],
     "kind": "io",
     "layer": "IO",
     "side": "TOP",
-    "x": 316,
-    "y": 64
-  },
-  {
-    "id": "PA1",
-    "label": "PA1",
-    "name": "PA1",
-    "special": [
-      "ADC1",
-      "TIM2_CH2"
-    ],
-    "kind": "io",
-    "layer": "IO",
-    "side": "TOP",
-    "x": 357,
-    "y": 64
-  },
-  {
-    "id": "PA2",
-    "label": "PA2",
-    "name": "PA2",
-    "special": [
-      "ADC2",
-      "TIM2_CH3",
-      "USART2_TX"
-    ],
-    "kind": "io",
-    "layer": "IO",
-    "side": "TOP",
-    "x": 399,
-    "y": 64
-  },
-  {
-    "id": "PA3",
-    "label": "PA3",
-    "name": "PA3",
-    "special": [
-      "ADC3",
-      "TIM2_CH4",
-      "USART2_RX"
-    ],
-    "kind": "io",
-    "layer": "IO",
-    "side": "TOP",
-    "x": 440,
-    "y": 64
-  },
-  {
-    "id": "PA4",
-    "label": "PA4",
-    "name": "PA4",
-    "special": [
-      "ADC4",
-      "SPI1_NSS"
-    ],
-    "kind": "io",
-    "layer": "IO",
-    "side": "TOP",
-    "x": 482,
-    "y": 64
-  },
-  {
-    "id": "PA5",
-    "label": "PA5",
-    "name": "PA5",
-    "special": [
-      "ADC5",
-      "SPI1_SCK"
-    ],
-    "kind": "io",
-    "layer": "IO",
-    "side": "TOP",
-    "x": 523,
-    "y": 64
-  },
-  {
-    "id": "PA6",
-    "label": "PA6",
-    "name": "PA6",
-    "special": [
-      "ADC6",
-      "SPI1_MISO",
-      "TIM3_CH1"
-    ],
-    "kind": "io",
-    "layer": "IO",
-    "side": "TOP",
-    "x": 565,
-    "y": 64
+    "x": 662,
+    "y": 262
   },
   {
     "id": "PA7",
@@ -163,186 +111,336 @@
     "kind": "io",
     "layer": "IO",
     "side": "TOP",
-    "x": 606,
-    "y": 64
+    "x": 749,
+    "y": 262
   },
   {
-    "id": "PB0",
-    "label": "PB0",
-    "name": "PB0",
+    "id": "PA6",
+    "label": "PA6",
+    "name": "PA6",
     "special": [
-      "ADC8",
-      "TIM3_CH3"
+      "ADC6",
+      "SPI1_MISO",
+      "TIM3_CH1"
     ],
     "kind": "io",
     "layer": "IO",
     "side": "TOP",
-    "x": 648,
-    "y": 64
+    "x": 836,
+    "y": 262
   },
   {
-    "id": "PB1",
-    "label": "PB1",
-    "name": "PB1",
+    "id": "PA5",
+    "label": "PA5",
+    "name": "PA5",
     "special": [
-      "ADC9",
-      "TIM3_CH4"
+      "ADC5",
+      "SPI1_SCK"
     ],
     "kind": "io",
     "layer": "IO",
     "side": "TOP",
-    "x": 689,
-    "y": 64
+    "x": 922,
+    "y": 262
   },
   {
-    "id": "PB10",
-    "label": "PB10",
-    "name": "PB10",
+    "id": "PA4",
+    "label": "PA4",
+    "name": "PA4",
     "special": [
-      "I2C2_SCL",
-      "USART3_TX"
+      "ADC4",
+      "SPI1_NSS"
     ],
     "kind": "io",
     "layer": "IO",
     "side": "TOP",
-    "x": 731,
-    "y": 64
+    "x": 1009,
+    "y": 262
   },
   {
-    "id": "PB11",
-    "label": "PB11",
-    "name": "PB11",
+    "id": "PA3",
+    "label": "PA3",
+    "name": "PA3",
     "special": [
-      "I2C2_SDA",
-      "USART3_RX"
+      "ADC3",
+      "TIM2_CH4",
+      "USART2_RX"
     ],
     "kind": "io",
     "layer": "IO",
     "side": "TOP",
-    "x": 772,
-    "y": 64
+    "x": 1096,
+    "y": 262
   },
   {
-    "id": "RESET",
-    "label": "RESET",
-    "name": "RESET",
-    "special": [],
-    "kind": "rst",
-    "layer": "POWER",
+    "id": "PA2",
+    "label": "PA2",
+    "name": "PA2",
+    "special": [
+      "ADC2",
+      "TIM2_CH3",
+      "USART2_TX"
+    ],
+    "kind": "io",
+    "layer": "IO",
     "side": "TOP",
-    "x": 814,
-    "y": 64
+    "x": 1183,
+    "y": 262
   },
   {
-    "id": "3V3",
-    "label": "3V3",
-    "name": "3V3",
+    "id": "PA1",
+    "label": "PA1",
+    "name": "PA1",
+    "special": [
+      "ADC1",
+      "TIM2_CH2"
+    ],
+    "kind": "io",
+    "layer": "IO",
+    "side": "TOP",
+    "x": 1269,
+    "y": 262
+  },
+  {
+    "id": "PA0",
+    "label": "PA0",
+    "name": "PA0",
+    "special": [
+      "ADC0",
+      "TIM2_CH1"
+    ],
+    "kind": "io",
+    "layer": "IO",
+    "side": "TOP",
+    "x": 1356,
+    "y": 262
+  },
+  {
+    "id": "PC15",
+    "label": "PC15",
+    "name": "PC15",
+    "special": [
+      "OSC32_OUT"
+    ],
+    "kind": "io",
+    "layer": "IO",
+    "side": "TOP",
+    "x": 1443,
+    "y": 262
+  },
+  {
+    "id": "PC14",
+    "label": "PC14",
+    "name": "PC14",
+    "special": [
+      "OSC32_IN"
+    ],
+    "kind": "io",
+    "layer": "IO",
+    "side": "TOP",
+    "x": 1530,
+    "y": 262
+  },
+  {
+    "id": "PC13",
+    "label": "PC13",
+    "name": "PC13",
+    "special": [
+      "LED",
+      "TAMPER"
+    ],
+    "kind": "io",
+    "layer": "IO",
+    "side": "TOP",
+    "x": 1616,
+    "y": 262
+  },
+  {
+    "id": "VBAT",
+    "label": "VBAT",
+    "name": "VBAT",
     "special": [],
     "kind": "pwr",
     "layer": "POWER",
     "side": "TOP",
-    "x": 855,
-    "y": 64
+    "x": 1703,
+    "y": 262
   },
   {
-    "id": "GND",
-    "label": "GND",
-    "name": "GND",
-    "special": [],
-    "kind": "gnd",
-    "layer": "POWER",
-    "side": "TOP",
-    "x": 897,
-    "y": 64
-  },
-  {
-    "id": "GND#2",
-    "label": "GND",
-    "name": "GND",
-    "special": [],
-    "kind": "gnd",
-    "layer": "POWER",
-    "side": "TOP",
-    "x": 938,
-    "y": 64
-  },
-  {
-    "id": "3V3#2",
-    "label": "3V3",
-    "name": "3V3",
-    "special": [],
-    "kind": "pwr",
-    "layer": "POWER",
-    "side": "BOTTOM",
-    "x": 150,
-    "y": 406
-  },
-  {
-    "id": "GND#3",
-    "label": "GND",
-    "name": "GND",
-    "special": [],
-    "kind": "gnd",
-    "layer": "POWER",
-    "side": "BOTTOM",
-    "x": 191,
-    "y": 406
-  },
-  {
-    "id": "5V",
-    "label": "5V",
-    "name": "5V",
-    "special": [],
-    "kind": "pwr",
-    "layer": "POWER",
-    "side": "BOTTOM",
-    "x": 233,
-    "y": 406
-  },
-  {
-    "id": "PB9",
-    "label": "PB9",
-    "name": "PB9",
+    "id": "PB12",
+    "label": "PB12",
+    "name": "PB12",
     "special": [
-      "I2C1_SDA",
-      "TIM4_CH4",
-      "CAN_TX"
+      "SPI2_NSS"
     ],
     "kind": "io",
     "layer": "IO",
     "side": "BOTTOM",
-    "x": 274,
-    "y": 406
+    "x": 55,
+    "y": 548
   },
   {
-    "id": "PB8",
-    "label": "PB8",
-    "name": "PB8",
+    "id": "PB13",
+    "label": "PB13",
+    "name": "PB13",
     "special": [
-      "I2C1_SCL",
-      "TIM4_CH3",
+      "SPI2_SCK"
+    ],
+    "kind": "io",
+    "layer": "IO",
+    "side": "BOTTOM",
+    "x": 142,
+    "y": 548
+  },
+  {
+    "id": "PB14",
+    "label": "PB14",
+    "name": "PB14",
+    "special": [
+      "SPI2_MISO"
+    ],
+    "kind": "io",
+    "layer": "IO",
+    "side": "BOTTOM",
+    "x": 228,
+    "y": 548
+  },
+  {
+    "id": "PB15",
+    "label": "PB15",
+    "name": "PB15",
+    "special": [
+      "SPI2_MOSI"
+    ],
+    "kind": "io",
+    "layer": "IO",
+    "side": "BOTTOM",
+    "x": 315,
+    "y": 548
+  },
+  {
+    "id": "PA8",
+    "label": "PA8",
+    "name": "PA8",
+    "special": [
+      "TIM1_CH1",
+      "MCO"
+    ],
+    "kind": "io",
+    "layer": "IO",
+    "side": "BOTTOM",
+    "x": 402,
+    "y": 548
+  },
+  {
+    "id": "PA9",
+    "label": "PA9",
+    "name": "PA9",
+    "special": [
+      "USART1_TX",
+      "TIM1_CH2"
+    ],
+    "kind": "io",
+    "layer": "IO",
+    "side": "BOTTOM",
+    "x": 489,
+    "y": 548
+  },
+  {
+    "id": "PA10",
+    "label": "PA10",
+    "name": "PA10",
+    "special": [
+      "USART1_RX",
+      "TIM1_CH3"
+    ],
+    "kind": "io",
+    "layer": "IO",
+    "side": "BOTTOM",
+    "x": 575,
+    "y": 548
+  },
+  {
+    "id": "PA11",
+    "label": "PA11",
+    "name": "PA11",
+    "special": [
+      "USB_DM",
       "CAN_RX"
     ],
     "kind": "io",
     "layer": "IO",
     "side": "BOTTOM",
-    "x": 316,
-    "y": 406
+    "x": 662,
+    "y": 548
   },
   {
-    "id": "PB7",
-    "label": "PB7",
-    "name": "PB7",
+    "id": "PA12",
+    "label": "PA12",
+    "name": "PA12",
     "special": [
-      "I2C1_SDA",
-      "USART1_RX",
-      "TIM4_CH2"
+      "USB_DP",
+      "CAN_TX"
     ],
     "kind": "io",
     "layer": "IO",
     "side": "BOTTOM",
-    "x": 357,
-    "y": 406
+    "x": 749,
+    "y": 548
+  },
+  {
+    "id": "PA15",
+    "label": "PA15",
+    "name": "PA15",
+    "special": [
+      "TIM2_CH1",
+      "JTDI"
+    ],
+    "kind": "io",
+    "layer": "IO",
+    "side": "BOTTOM",
+    "x": 836,
+    "y": 548
+  },
+  {
+    "id": "PB3",
+    "label": "PB3",
+    "name": "PB3",
+    "special": [
+      "SPI1_SCK",
+      "JTDO"
+    ],
+    "kind": "io",
+    "layer": "IO",
+    "side": "BOTTOM",
+    "x": 922,
+    "y": 548
+  },
+  {
+    "id": "PB4",
+    "label": "PB4",
+    "name": "PB4",
+    "special": [
+      "SPI1_MISO"
+    ],
+    "kind": "io",
+    "layer": "IO",
+    "side": "BOTTOM",
+    "x": 1009,
+    "y": 548
+  },
+  {
+    "id": "PB5",
+    "label": "PB5",
+    "name": "PB5",
+    "special": [
+      "SPI1_MOSI"
+    ],
+    "kind": "io",
+    "layer": "IO",
+    "side": "BOTTOM",
+    "x": 1096,
+    "y": 548
   },
   {
     "id": "PB6",
@@ -356,213 +454,101 @@
     "kind": "io",
     "layer": "IO",
     "side": "BOTTOM",
-    "x": 399,
-    "y": 406
+    "x": 1183,
+    "y": 548
   },
   {
-    "id": "PB5",
-    "label": "PB5",
-    "name": "PB5",
+    "id": "PB7",
+    "label": "PB7",
+    "name": "PB7",
     "special": [
-      "SPI1_MOSI",
-      "I2C1_SMBA"
+      "I2C1_SDA",
+      "USART1_RX",
+      "TIM4_CH2"
     ],
     "kind": "io",
     "layer": "IO",
     "side": "BOTTOM",
-    "x": 440,
-    "y": 406
+    "x": 1269,
+    "y": 548
   },
   {
-    "id": "PB4",
-    "label": "PB4",
-    "name": "PB4",
+    "id": "PB8",
+    "label": "PB8",
+    "name": "PB8",
     "special": [
-      "SPI1_MISO"
-    ],
-    "kind": "io",
-    "layer": "IO",
-    "side": "BOTTOM",
-    "x": 482,
-    "y": 406
-  },
-  {
-    "id": "PB3",
-    "label": "PB3",
-    "name": "PB3",
-    "special": [
-      "SPI1_SCK",
-      "JTDO"
-    ],
-    "kind": "io",
-    "layer": "IO",
-    "side": "BOTTOM",
-    "x": 523,
-    "y": 406
-  },
-  {
-    "id": "PA15",
-    "label": "PA15",
-    "name": "PA15",
-    "special": [
-      "TIM2_CH1",
-      "JTDI"
-    ],
-    "kind": "io",
-    "layer": "IO",
-    "side": "BOTTOM",
-    "x": 565,
-    "y": 406
-  },
-  {
-    "id": "PA12",
-    "label": "PA12",
-    "name": "PA12",
-    "special": [
-      "USB_DP",
-      "CAN_TX"
-    ],
-    "kind": "io",
-    "layer": "IO",
-    "side": "BOTTOM",
-    "x": 606,
-    "y": 406
-  },
-  {
-    "id": "PA11",
-    "label": "PA11",
-    "name": "PA11",
-    "special": [
-      "USB_DM",
+      "I2C1_SCL",
+      "TIM4_CH3",
       "CAN_RX"
     ],
     "kind": "io",
     "layer": "IO",
     "side": "BOTTOM",
-    "x": 648,
-    "y": 406
+    "x": 1356,
+    "y": 548
   },
   {
-    "id": "PA10",
-    "label": "PA10",
-    "name": "PA10",
+    "id": "PB9",
+    "label": "PB9",
+    "name": "PB9",
     "special": [
-      "USART1_RX",
-      "TIM1_CH3"
+      "I2C1_SDA",
+      "TIM4_CH4",
+      "CAN_TX"
     ],
     "kind": "io",
     "layer": "IO",
     "side": "BOTTOM",
-    "x": 689,
-    "y": 406
+    "x": 1443,
+    "y": 548
   },
   {
-    "id": "PA9",
-    "label": "PA9",
-    "name": "PA9",
-    "special": [
-      "USART1_TX",
-      "TIM1_CH2"
-    ],
-    "kind": "io",
-    "layer": "IO",
+    "id": "5V#2",
+    "label": "5V",
+    "name": "5V",
+    "special": [],
+    "kind": "pwr",
+    "layer": "POWER",
     "side": "BOTTOM",
-    "x": 731,
-    "y": 406
+    "x": 1530,
+    "y": 548
   },
   {
-    "id": "PA8",
-    "label": "PA8",
-    "name": "PA8",
-    "special": [
-      "TIM1_CH1",
-      "MCO"
-    ],
-    "kind": "io",
-    "layer": "IO",
+    "id": "GND#2",
+    "label": "GND",
+    "name": "GND",
+    "special": [],
+    "kind": "gnd",
+    "layer": "POWER",
     "side": "BOTTOM",
-    "x": 772,
-    "y": 406
+    "x": 1616,
+    "y": 548
   },
   {
-    "id": "PB15",
-    "label": "PB15",
-    "name": "PB15",
-    "special": [
-      "SPI2_MOSI"
-    ],
-    "kind": "io",
-    "layer": "IO",
-    "side": "BOTTOM",
-    "x": 814,
-    "y": 406
-  },
-  {
-    "id": "PB14",
-    "label": "PB14",
-    "name": "PB14",
-    "special": [
-      "SPI2_MISO"
-    ],
-    "kind": "io",
-    "layer": "IO",
-    "side": "BOTTOM",
-    "x": 855,
-    "y": 406
-  },
-  {
-    "id": "PB13",
-    "label": "PB13",
-    "name": "PB13",
-    "special": [
-      "SPI2_SCK"
-    ],
-    "kind": "io",
-    "layer": "IO",
-    "side": "BOTTOM",
-    "x": 897,
-    "y": 406
-  },
-  {
-    "id": "PB12",
-    "label": "PB12",
-    "name": "PB12",
-    "special": [
-      "SPI2_NSS"
-    ],
-    "kind": "io",
-    "layer": "IO",
-    "side": "BOTTOM",
-    "x": 938,
-    "y": 406
-  },
-  {
-    "id": "3V3#3",
+    "id": "3V3#2",
     "label": "3V3",
     "name": "3V3",
     "special": [],
     "kind": "pwr",
     "layer": "POWER",
-    "side": "END",
-    "x": 1000,
-    "y": 150
+    "side": "BOTTOM",
+    "x": 1703,
+    "y": 548
   },
   {
-    "id": "PA13",
-    "label": "PA13",
-    "name": "PA13",
-    "special": [
-      "SWDIO"
-    ],
-    "kind": "io",
+    "id": "GND#3",
+    "label": "GND",
+    "name": "GND",
+    "special": [],
+    "kind": "gnd",
     "layer": "SWD",
     "side": "END",
-    "x": 1000,
-    "y": 202
+    "x": 1716,
+    "y": 295
   },
   {
     "id": "PA14",
-    "label": "PA14",
+    "label": "SWCLK",
     "name": "PA14",
     "special": [
       "SWCLK"
@@ -570,18 +556,31 @@
     "kind": "io",
     "layer": "SWD",
     "side": "END",
-    "x": 1000,
-    "y": 254
+    "x": 1716,
+    "y": 380
   },
   {
-    "id": "GND#4",
-    "label": "GND",
-    "name": "GND",
-    "special": [],
-    "kind": "gnd",
-    "layer": "POWER",
+    "id": "PA13",
+    "label": "SWDIO",
+    "name": "PA13",
+    "special": [
+      "SWDIO"
+    ],
+    "kind": "io",
+    "layer": "SWD",
     "side": "END",
-    "x": 1000,
-    "y": 306
+    "x": 1716,
+    "y": 465
+  },
+  {
+    "id": "3V3#3",
+    "label": "3V3",
+    "name": "3V3",
+    "special": [],
+    "kind": "pwr",
+    "layer": "SWD",
+    "side": "END",
+    "x": 1716,
+    "y": 550
   }
 ]
