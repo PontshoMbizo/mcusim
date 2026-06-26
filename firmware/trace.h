@@ -68,6 +68,13 @@ static inline void trace_pin(const char *name, unsigned value) {
   sh_write0(line);
 }
 
+/* Free-form debug line. The host parser ignores any line that isn't "#n NAME 0|1",
+ * so these are safe to sprinkle in for diagnostics. */
+static inline void trace_msg(const char *s) {
+  sh_write0(s);
+  sh_write0("\n");
+}
+
 /* Mark end of trace. */
 static inline void trace_end(void) {
   sh_write0("##END\n");
