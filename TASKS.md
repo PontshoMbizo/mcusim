@@ -5,12 +5,13 @@ Mirrors nikaVSimulator's architecture; reuse its frontend + model where possible
 
 ## Phase 0 — Spike the backend (de-risk first)
 
-- [ ] Install `arm-none-eabi-gcc` + `qemu-system-arm`; confirm versions
-- [ ] Write a minimal F103 linker script + startup (vector table, reset handler, `.data`/`.bss` init)
-- [ ] Blink PC13 in bare-metal C → compile to `.elf` → run under `qemu-system-arm`
-- [ ] Decide QEMU machine/board: stock STM32 support vs a Cortex-M3 model we drive
-- [ ] Get **one** observable signal out of QEMU (semihosting/UART/GPIO memory watch)
-- [ ] **DONE marker:** a known-good blink produces a machine-readable pin trace
+- [x] **DONE** F103 linker script + startup (vector table, reset, `.data`/`.bss` init) — `firmware/`
+- [x] **DONE** Blink PC13 in bare-metal C with semihosting trace — `firmware/blink.c` + `trace.h`
+- [x] **DONE** Observability path chosen to spike both: mainline semihosting trace + xPack native GPIO
+- [x] **DONE** Sim container for both engines — `sim/Dockerfile.mainline`, `Dockerfile.xpack`, `entrypoint.sh`
+- [x] **DONE** Makefile with `run-main` / `run-xpack` targets
+- [ ] **RUN ON DOCKER HOST:** build images, pipe `blink.c`, confirm `##END` trace (see `sim/README.md` checklist)
+- [ ] Decide default engine after comparing xPack native GPIO vs mainline trace
 
 ## Phase 1 — Board model + viewer (port from nikaV)
 
@@ -19,13 +20,13 @@ Mirrors nikaVSimulator's architecture; reuse its frontend + model where possible
 - [ ] Port `HardwareViewer` + pin overlay / inspector / legend / search from nikaV
 - [ ] Pin-mapper page: map firmware GPIO (e.g. PC13) → board pin highlight
 
-## Phase 2 — Simulation pipeline
+## Phase 1.5 — Backend pipeline (DONE — ported from nikaV)
 
-- [ ] `/api/simulate` contract: POST `{ code }` → `{ ok, trace, log, stage }`
-- [ ] Sandbox entrypoint: `stdin C → gcc → qemu → trace on stdout, logs on stderr`
-- [ ] Lock down the container (no network, read-only FS, non-root, CPU/mem/time caps)
-- [ ] Trace format: GPIO level changes + timestamps (consider VCD shape for reuse)
-- [ ] Parser → shared board-state model → live pin states + waveform pane
+- [x] **DONE** `/api/simulate` contract: POST `{ code, engine? }` → `{ ok, engine, trace, model, log, stage }` — `src/app/api/simulate/route.js`
+- [x] **DONE** Sandbox entrypoint: `stdin C → gcc → qemu → trace on stdout, logs on stderr`
+- [x] **DONE** Container lockdown in `src/lib/sandbox.js` (no network, read-only FS, non-root, CPU/mem/pid/time caps, dual timeout)
+- [x] **DONE** Trace format + parser → board-state model — `src/lib/trace.js` (4 unit tests passing)
+- [ ] Wire the parsed model into the (Phase 2) pin overlay + waveform pane
 
 ## Phase 3 — Editor + UX
 

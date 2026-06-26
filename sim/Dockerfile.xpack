@@ -1,0 +1,37 @@
+# Hardened image: compile + run ONE untrusted STM32 firmware per container, xPack QEMU.
+# The xPack "QEMU Arm" (GNU MCU Eclipse fork) models the STM32F103 GPIO/LEDs natively.
+# Build:  podman build -t stm-sim-xpack -f sim/Dockerfile.xpack .
+# Run:    see src/lib/sandbox.js (SIM_ENGINE=xpack).
+#
+# NOTE: xPack QEMU ships as a prebuilt glibc tarball, so we base on Debian (not Alpine).
+# Pin XPACK_VER to a current release when building; verify the URL/version first.
+FROM debian:bookworm-slim
+
+ARG XPACK_VER=7.2.5-1
+ARG XPACK_TARBALL=xpack-qemu-arm-${XPACK_VER}-linux-x64.tar.gz
+ARG XPACK_URL=https://github.com/xpack-dev-tools/qemu-arm-xpack/releases/download/v${XPACK_VER}/${XPACK_TARBALL}
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      gcc-arm-none-eabi \
+      ca-certificates curl xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Fetch the xPack QEMU Arm fork and put qemu-system-gnuarmeclipse on PATH.
+RUN curl -fsSL "$XPACK_URL" -o /tmp/qemu.tar.gz \
+    && mkdir -p /opt/xpack-qemu \
+    && tar -xzf /tmp/qemu.tar.gz -C /opt/xpack-qemu --strip-components=1 \
+    && rm /tmp/qemu.tar.gz \
+    && ln -s /opt/xpack-qemu/bin/qemu-system-gnuarmeclipse /usr/local/bin/qemu-system-gnuarmeclipse
+
+COPY firmware/startup.c     /opt/fw/startup.c
+COPY firmware/stm32f103.ld  /opt/fw/stm32f103.ld
+COPY firmware/trace.h       /opt/fw/trace.h
+
+RUN useradd -u 1000 -m sim
+COPY sim/entrypoint.sh /usr/local/bin/run-sim
+RUN chmod +x /usr/local/bin/run-sim
+
+ENV SIM_ENGINE=xpack
+USER sim
+WORKDIR /work
+ENTRYPOINT ["/usr/local/bin/run-sim"]

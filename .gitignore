@@ -1,0 +1,19 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# next.js
+/.next/
+/out/
+
+# build outputs
+/dist
+firmware/firmware.elf
+firmware/firmware.bin
+*.o
+
+# misc
+.DS_Store
+*.log
+.env*.local

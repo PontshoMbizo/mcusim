@@ -1,0 +1,26 @@
+# Hardened image: compile + run ONE untrusted STM32 firmware per container, mainline QEMU.
+# Build:  podman build -t stm-sim-mainline -f sim/Dockerfile.mainline .
+# Run:    see src/lib/sandbox.js for the full locked-down flag set (SIM_ENGINE=mainline).
+FROM alpine:3.20
+
+# arm-none-eabi-gcc cross toolchain + mainline qemu-system-arm. No shells/tools beyond
+# what compile + run need. (newlib provides libgcc/headers for -nostdlib + -lgcc.)
+RUN apk add --no-cache \
+      gcc-arm-none-eabi \
+      newlib-arm-none-eabi \
+      qemu-system-arm
+
+# Baked-in firmware scaffold: startup, linker script, trace shim (user code provides main).
+COPY firmware/startup.c     /opt/fw/startup.c
+COPY firmware/stm32f103.ld  /opt/fw/stm32f103.ld
+COPY firmware/trace.h       /opt/fw/trace.h
+
+# Non-root; everything happens in a tmpfs /work mounted at run time.
+RUN adduser -D -u 1000 sim
+COPY sim/entrypoint.sh /usr/local/bin/run-sim
+RUN chmod +x /usr/local/bin/run-sim
+
+ENV SIM_ENGINE=mainline
+USER sim
+WORKDIR /work
+ENTRYPOINT ["/usr/local/bin/run-sim"]
