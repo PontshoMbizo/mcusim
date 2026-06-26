@@ -1,41 +1,53 @@
 /*
- * diag.c — step-by-step diagnostic firmware. Emits a "dbg:" marker after each operation
- * so we can see exactly where execution stops. Tiny delay (no big loop). Run with:
- *     cd firmware && make run-main USER=diag.c
- * The host parser ignores the dbg lines; only #n PC13 v / ##END are real trace events.
+ * diag.c — SELF-CONTAINED step-by-step diagnostic firmware (no trace.h dependency, so it
+ * compiles against any baked image). Emits a "dbg:" marker after each operation; wherever
+ * output stops is where execution stopped. Run via the container command in the chat.
  */
-#include "trace.h"
 
-#define RCC_APB2ENR  (*(volatile unsigned int *)0x40021018u)
-#define GPIOC_CRH    (*(volatile unsigned int *)0x40011004u)
-#define GPIOC_ODR    (*(volatile unsigned int *)0x4001100Cu)
-#define PC13 13u
+/* semihosting: SYS_WRITE0 (0x04) writes a NUL-terminated string to the host console */
+static inline void shw(const char *s) {
+  register int r0 asm("r0") = 0x04;
+  register const char *r1 asm("r1") = s;
+  asm volatile("bkpt 0xAB" : "+r"(r0) : "r"(r1) : "memory");
+}
+/* SYS_EXIT (0x18) — cleanly stop QEMU */
+static inline void shexit(void) {
+  unsigned b[2] = {0x20026u, 0u};
+  register int r0 asm("r0") = 0x18;
+  register void *r1 asm("r1") = b;
+  asm volatile("bkpt 0xAB" : "+r"(r0) : "r"(r1) : "memory");
+  for (;;) { }
+}
+
+#define RCC_APB2ENR (*(volatile unsigned int *)0x40021018u)
+#define GPIOC_CRH   (*(volatile unsigned int *)0x40011004u)
+#define GPIOC_ODR   (*(volatile unsigned int *)0x4001100Cu)
 
 int main(void) {
-  trace_msg("dbg: start");
+  shw("dbg: start\n");
 
   RCC_APB2ENR |= (1u << 4);
-  trace_msg("dbg: rcc enabled");
+  shw("dbg: rcc enabled\n");
 
   GPIOC_CRH &= ~(0xFu << 20);
   GPIOC_CRH |=  (0x2u << 20);
-  trace_msg("dbg: crh configured");
+  shw("dbg: crh configured\n");
 
   for (unsigned i = 0; i < 3; ++i) {
-    GPIOC_ODR |= (1u << PC13);
-    trace_pin("PC13", 1);
-    trace_msg("dbg: led off written");
+    GPIOC_ODR |= (1u << 13);
+    shw("#A PC13 1\n");
+    shw("dbg: odr-set done\n");
 
     for (volatile int d = 0; d < 50; ++d) { asm volatile("nop"); }
-    trace_msg("dbg: post-delay");
+    shw("dbg: post-delay\n");
 
-    GPIOC_ODR &= ~(1u << PC13);
-    trace_pin("PC13", 0);
-    trace_msg("dbg: led on written");
+    GPIOC_ODR &= ~(1u << 13);
+    shw("#B PC13 0\n");
+    shw("dbg: odr-clr done\n");
   }
 
-  trace_msg("dbg: loop done");
-  trace_end();
-  trace_exit();
+  shw("dbg: loop done\n");
+  shw("##END\n");
+  shexit();
   return 0;
 }

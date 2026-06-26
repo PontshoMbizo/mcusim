@@ -21,7 +21,8 @@ TRACE="$WORK/trace.txt"
 cat > "$USER_C"
 
 # 2. Cross-compile: startup + user code, linked for the F103. Logs -> stderr.
-if ! arm-none-eabi-gcc \
+# -pipe keeps intermediate files off /tmp (the container FS is read-only except /work).
+if ! TMPDIR=/work arm-none-eabi-gcc -pipe \
       -mcpu=cortex-m3 -mthumb -ffreestanding -nostdlib -Os \
       -ffunction-sections -fdata-sections -I/opt/fw \
       /opt/fw/startup.c "$USER_C" \
