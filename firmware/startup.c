@@ -14,11 +14,24 @@ extern int main(void);
 
 void Reset_Handler(void);
 void Default_Handler(void);
+void NMI_Handler(void);
+void HardFault_Handler(void);
+void SysTick_Handler(void) __attribute__((weak, alias("Default_Handler")));
 
-/* Weak aliases so user code could override later; all trap by default. */
-void NMI_Handler(void)        __attribute__((weak, alias("Default_Handler")));
-void HardFault_Handler(void)  __attribute__((weak, alias("Default_Handler")));
-void SysTick_Handler(void)    __attribute__((weak, alias("Default_Handler")));
+/* Minimal semihosting so a fault is *visible* (a ##FAULT marker on stdout) instead of a
+ * silent lockup. Kept self-contained here so startup has no dependency on trace.h. */
+static inline void sh_write0_(const char *s) {
+  register int r0 asm("r0") = 0x04;          /* SYS_WRITE0 */
+  register const char *r1 asm("r1") = s;
+  asm volatile("bkpt 0xAB" : "+r"(r0) : "r"(r1) : "memory");
+}
+static inline void sh_exit_(void) {
+  unsigned b[2] = {0x20026u, 0u};            /* SYS_EXIT: ApplicationExit */
+  register int r0 asm("r0") = 0x18;
+  register void *r1 asm("r1") = b;
+  asm volatile("bkpt 0xAB" : "+r"(r0) : "r"(r1) : "memory");
+  for (;;) { }
+}
 
 /* Vector table: only the core entries the spike needs. Extend for NVIC IRQs later. */
 __attribute__((section(".isr_vector"), used))
@@ -43,9 +56,13 @@ void Reset_Handler(void) {
   for (uint32_t *b = &_sbss; b < &_ebss; ++b) *b = 0;
 
   main();
-  for (;;) { /* main returned: trap */ }
+  /* main returned (e.g. SYS_EXIT no-op): surface it rather than hang. */
+  sh_write0_("##END main-returned\n");
+  sh_exit_();
 }
 
-void Default_Handler(void) {
-  for (;;) { /* unexpected exception: trap */ }
-}
+/* Fault handlers emit a marker then stop QEMU, so failures are diagnosable. */
+void HardFault_Handler(void) { sh_write0_("##FAULT HardFault\n"); sh_exit_(); }
+void NMI_Handler(void)       { sh_write0_("##FAULT NMI\n");       sh_exit_(); }
+
+void Default_Handler(void) { sh_write0_("##FAULT unexpected exception\n"); sh_exit_(); }
