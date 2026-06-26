@@ -32,29 +32,39 @@ if ! TMPDIR=/work arm-none-eabi-gcc -pipe \
 fi
 
 # 3. Run under the selected engine. The firmware ends with SYS_EXIT, so QEMU stops on
-#    its own; sandbox.js still enforces a host-side hard timeout as the primary stop.
-#    Trace (semihosting stdout) is captured to a file; QEMU's own logs go to stderr.
-case "$ENGINE" in
-  xpack)
-    if ! qemu-system-gnuarmeclipse \
-          --board STM32-H103 --mcu STM32F103RB -nographic \
-          --semihosting-config enable=on,target=native \
-          -kernel "$ELF" >"$TRACE" 2>>/dev/stderr; then
-      exit 3
-    fi
-    ;;
-  *)
-    if ! qemu-system-arm -M stm32vldiscovery -nographic \
-          -semihosting-config enable=on,target=native \
-          -kernel "$ELF" >"$TRACE" 2>>/dev/stderr; then
-      exit 3
-    fi
-    ;;
-esac
+#    its own; `timeout` is a backstop if it doesn't, and sandbox.js adds a host SIGKILL.
+#    IMPORTANT: QEMU's semihosting console defaults to *stderr* under -nographic (not
+#    stdout), and SYS_EXIT can make QEMU return non-zero, so we must NOT judge success by
+#    exit code or by stdout alone. Capture both streams and pick whichever carries ##END.
+RUN_LOG="$WORK/qemu.log"
+
+run_engine() {
+  case "$ENGINE" in
+    xpack)
+      timeout 15 qemu-system-gnuarmeclipse \
+        --board STM32-H103 --mcu STM32F103RB -nographic \
+        --semihosting-config enable=on,target=native \
+        -kernel "$ELF"
+      ;;
+    *)
+      timeout 15 qemu-system-arm -M stm32vldiscovery -nographic \
+        -semihosting-config enable=on,target=native \
+        -kernel "$ELF"
+      ;;
+  esac
+}
+
+run_engine >"$TRACE" 2>"$RUN_LOG" || true
+
+# Semihosting may have written the trace to stderr instead of stdout — fall back to it.
+if ! grep -q '##END' "$TRACE" && grep -q '##END' "$RUN_LOG"; then
+  cp "$RUN_LOG" "$TRACE"
+fi
 
 # 4. A well-formed run ends with the ##END marker. Absence => firmware never traced.
 if ! grep -q '##END' "$TRACE"; then
-  echo "error: no trace produced (did the firmware call trace_end()/trace_exit()?)" 1>&2
+  echo "error: no trace produced (no ##END on stdout or stderr)." 1>&2
+  sed -n '1,40p' "$RUN_LOG" 1>&2
   exit 4
 fi
 
