@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+/*
+ * stmVSimulator design tokens (ported from nikaVSimulator).
+ * Each token under @theme becomes a Tailwind utility, e.g.
+ *   --color-panel -> bg-panel / border-panel / text-panel
+ * SVG fill/stroke literals live in src/lib/theme.js and mirror these values.
+ */
+@theme {
+  --color-base: #0a0a0a;
+  --color-panel: #1e1e1e;
+  --color-elevated: #262626;
+  --color-hover: #2a2a2a;
+
+  --color-edge: #3e3e42;
+
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #d4d4d4;
+  --color-text-muted: #6b7280;
+
+  --color-accent: #22c55e;
+  --color-danger: #ef4444;
+  --color-info: #38bdf8;
+  --color-focus: #3b82f6;
+
+  --color-sig-high: #22c55e;
+  --color-sig-low: #3f6212;
+  --color-sig-x: #f59e0b;
+  --color-sig-z: #6b7280;
+}
+
+body {
+  background: var(--color-base);
+  color: var(--color-text-secondary);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.custom-scrollbar::-webkit-scrollbar { width: 10px; height: 10px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: var(--color-panel); }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: var(--color-edge); border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--color-hover); }

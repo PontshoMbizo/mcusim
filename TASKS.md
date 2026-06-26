@@ -13,12 +13,16 @@ Mirrors nikaVSimulator's architecture; reuse its frontend + model where possible
 - [ ] **RUN ON DOCKER HOST:** build images, pipe `blink.c`, confirm `##END` trace (see `sim/README.md` checklist)
 - [ ] Decide default engine after comparing xPack native GPIO vs mainline trace
 
-## Phase 1 — Board model + viewer (port from nikaV)
+## Phase 2 — Board model + viewer (DONE — ported from nikaV)
 
-- [ ] Source/redraw a Blue Pill board image; define `src/boards/bluepill.js`
-- [ ] Author `pins.json` / `components.json` / `nets.json` for the F103 pinout (48-pin LQFP)
-- [ ] Port `HardwareViewer` + pin overlay / inspector / legend / search from nikaV
-- [ ] Pin-mapper page: map firmware GPIO (e.g. PC13) → board pin highlight
+- [x] **DONE** Self-contained SVG Blue Pill board (`BoardImage.jsx`) — no bitmap needed; `src/boards/bluepill.js`
+- [x] **DONE** `pins.json` (44 pins: 40 header + 4 SWD, alt-functions) + `components.json` (MCU/USB/LED/xtals…)
+- [x] **DONE** Ported `HardwareViewer` + pin overlay (GPIO labels + glow) / inspector / legend / search
+- [x] **DONE** STM sim state consumes the trace model; pin ids = GPIO names so no separate mapping layer
+- [x] **DONE** Waveform pane (`SignalGeneratorPane`) renders bit traces with a cursor
+- [x] **DONE** C editor (`EditorPane`) with engine selector (mainline/xpack) + bare-metal blink default
+- [x] **DONE** App shell (HomeClient split panes, layout, globals.css); `next build` passes
+- [ ] Pin-mapper page (optional): click-to-assign / highlight (nikaV had a dedicated route)
 
 ## Phase 1.5 — Backend pipeline (DONE — ported from nikaV)
 

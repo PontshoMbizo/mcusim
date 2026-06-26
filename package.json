@@ -6,17 +6,21 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "next lint",
     "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
-    "next": "16.2.9",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "lucide-react": "^0.460.0",
+    "next": "15.5.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-zoom-pan-pinch": "^3.6.1"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4",
     "eslint": "^9",
-    "eslint-config-next": "16.2.9"
+    "eslint-config-next": "15.5.7",
+    "tailwindcss": "^4"
   }
 }
