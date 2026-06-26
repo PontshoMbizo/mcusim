@@ -29,10 +29,14 @@ Expected stdout: a run of `#<n> PC13 1` / `#<n> PC13 0` lines ending in `##END`.
 
 ## Status / open items (Phase 0 spike)
 
-- [ ] Confirm `apk add gcc-arm-none-eabi newlib-arm-none-eabi` provides `-lgcc` + headers
-      for `-nostdlib` builds (Alpine package names can drift).
+- [x] Alpine package names confirmed: `gcc-arm-none-eabi` + `newlib-arm-none-eabi` exist in
+      the community repo (enabled by default in the official `alpine` image). If
+      `arm-none-eabi-gcc` won't execute, add `gcompat` as a musl/glibc shim.
+- [x] RAM sized to 8 KB in the linker so the stack fits the `stm32vldiscovery` (F100RB)
+      QEMU model — see `firmware/stm32f103.ld`.
 - [ ] Confirm `stm32vldiscovery` loads an ELF linked at `0x08000000` and runs it.
-- [ ] Confirm mainline semihosting writes reach stdout under `-nographic`.
+- [ ] Confirm mainline semihosting writes reach stdout under `-nographic` (firmware ends
+      with `trace_exit()` → `SYS_EXIT`, so QEMU should terminate on its own).
 - [ ] xPack: verify the current `XPACK_VER` + the `--board/--mcu` names for an F103.
 - [ ] Compare xPack native GPIO/LED state against the semihosting trace, then pick the
       default engine.
