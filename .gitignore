@@ -17,3 +17,6 @@ firmware/firmware.bin
 .DS_Store
 *.log
 .env*.local
+
+# agent scratch
+/.claude
