@@ -65,7 +65,7 @@ export default function HardwareViewer({ board }) {
           count={filteredPins.length}
         />
 
-        <TransformWrapper minScale={0.5} maxScale={8} centerOnInit smooth={false} wheel={{ step: 0.3 }}>
+        <TransformWrapper minScale={0.1} initialScale={0.2} maxScale={8} centerOnInit smooth={false} wheel={{ step: 0.1 }}>
           <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }}>
             <svg
               viewBox={`0 0 ${BOARD_WIDTH} ${BOARD_HEIGHT}`}

@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import EditorPane from "@/components/EditorPane";
 import SimulationPane from "@/components/SimulationPane";
 import { SimProvider } from "@/lib/simState";
+import { listenForInit } from "@/lib/scopeioBridge";
 import { BluePillBoard } from "@/boards/bluepill";
 
 const DEFAULT_SPLIT = 55;
@@ -10,6 +11,12 @@ const DEFAULT_SPLIT = 55;
 export default function HomeClient() {
   const [topHeight, setTopHeight] = useState(DEFAULT_SPLIT); // % height of editor
   const [fullscreen, setFullscreen] = useState(null); // 'editor' | 'sim' | null
+  // Set only when embedded under scope.io with a scopeio:init message — drives
+  // the starter prefill + the extra Save/Capture/Submit button in EditorPane.
+  // Plain standalone use or the /tools iframe (no bridge) leaves this null.
+  const [embedMode, setEmbedMode] = useState(null);
+
+  useEffect(() => listenForInit(setEmbedMode), []);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
@@ -44,6 +51,7 @@ export default function HomeClient() {
           hidden={fullscreen === "sim"}
         >
           <EditorPane
+            embedMode={embedMode}
             isFullscreen={fullscreen === "editor"}
             onFullscreen={() => toggleFullscreen("editor")}
             isCollapsed={editorCollapsed}

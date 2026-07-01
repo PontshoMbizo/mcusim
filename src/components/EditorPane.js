@@ -1,34 +1,58 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Editor from "@monaco-editor/react";
-import { Code2, Play, Loader, RotateCcw, Cpu } from "lucide-react";
+import { Code2, Play, Loader, RotateCcw, Cpu, Send } from "lucide-react";
 import PaneHeader from "./ui/PaneHeader";
 import { useSim } from "../lib/simState";
 import { DEFAULT_FIRMWARE } from "../lib/templateDefaults";
+import { sendResult, extractChanges } from "../lib/scopeioBridge";
+
+const EMBED_ACTION_LABEL = { export: "Save starter", capture: "Capture golden", solve: "Submit" };
 
 // Editor for bare-metal C firmware. On "Run" the source is POSTed to /api/simulate, the
 // selected engine compiles + emulates it, and the returned trace model flows into the
 // shared sim state (board pins + waveforms update).
-export default function EditorPane({ isFullscreen, onFullscreen, isCollapsed, onCollapse }) {
+//
+// `embedMode` (optional) — set by HomeClient once a scopeio:init message arrives.
+// `{ mode: "export"|"capture"|"solve", starterCode, engine?, signal? }`.
+export default function EditorPane({ embedMode, isFullscreen, onFullscreen, isCollapsed, onCollapse }) {
   const [code, setCode] = useState(DEFAULT_FIRMWARE);
   const [engine, setEngine] = useState("mainline"); // 'mainline' | 'xpack'
   const { setModel } = useSim();
   const [running, setRunning] = useState(false);
   const [status, setStatus] = useState(null); // { ok, text }
 
+  // Seed the editor from the embed's starter/engine exactly once, the first
+  // time a scopeio:init arrives — not on every embedMode reference change, so
+  // it doesn't clobber edits if the parent re-renders.
+  const seededEmbed = useRef(false);
+  useEffect(() => {
+    if (!embedMode || seededEmbed.current) return;
+    seededEmbed.current = true;
+    if (embedMode.starterCode != null) setCode(embedMode.starterCode);
+    if (embedMode.engine) setEngine(embedMode.engine);
+  }, [embedMode]);
+
+  // Shared by the Run button and the embed action button: builds + emulates
+  // the firmware and flows a successful trace into the shared model.
+  const runSimulation = async () => {
+    const res = await fetch("/api/simulate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, engine }),
+    });
+    const data = await res.json();
+    const model = data.ok ? setModel(data.model) : null;
+    return { data, model };
+  };
+
   const handleRun = async () => {
     if (running) return;
     setRunning(true);
     setStatus(null);
     try {
-      const res = await fetch("/api/simulate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, engine }),
-      });
-      const data = await res.json();
+      const { data, model } = await runSimulation();
       if (data.ok) {
-        const model = setModel(data.model);
         const n = model?.signals?.length ?? 0;
         const warn = data.complete ? "" : " (incomplete trace)";
         setStatus({ ok: true, text: `Built + ran on ${data.engine} ✓ ${n} signal${n === 1 ? "" : "s"}${warn}` });
@@ -38,6 +62,38 @@ export default function EditorPane({ isFullscreen, onFullscreen, isCollapsed, on
       }
     } catch (e) {
       setStatus({ ok: false, text: `Request failed: ${e.message}` });
+    } finally {
+      setRunning(false);
+    }
+  };
+
+  // The embed-mode action button (Save starter / Capture golden / Submit).
+  // "export" just hands the current code back to scope.io — no pin is
+  // configured yet at that stage, so no run is needed. "capture" and "solve"
+  // both run and extract the configured pin's trace, which scope.io grades
+  // (capture: stores as golden; solve: grades against it).
+  const handleEmbedAction = async () => {
+    if (!embedMode || running) return;
+    if (embedMode.mode === "export") {
+      sendResult({ code, ok: true, log: "", changes: [], raw: "" });
+      return;
+    }
+    setRunning(true);
+    setStatus(null);
+    try {
+      const { data, model } = await runSimulation();
+      if (!data.ok) {
+        const firstLine = (data.log || "Run failed").split("\n").find(Boolean) || "Run failed";
+        setStatus({ ok: false, text: `${data.stage || "error"}: ${firstLine}` });
+        sendResult({ code, ok: false, log: data.log || firstLine, changes: [], raw: data.trace || "" });
+        return;
+      }
+      setStatus({ ok: true, text: `Built + ran on ${data.engine} ✓` });
+      const changes = extractChanges(model, embedMode.signal);
+      sendResult({ code, ok: true, log: "", changes, raw: data.trace });
+    } catch (e) {
+      setStatus({ ok: false, text: `Request failed: ${e.message}` });
+      sendResult({ code, ok: false, log: e.message, changes: [], raw: "" });
     } finally {
       setRunning(false);
     }
@@ -79,6 +135,17 @@ export default function EditorPane({ isFullscreen, onFullscreen, isCollapsed, on
             {running ? <Loader size={13} className="animate-spin" /> : <Play size={13} />}
             {running ? "Running" : "Run"}
           </button>
+          {embedMode && (
+            <button
+              onClick={handleEmbedAction}
+              disabled={running}
+              className="flex items-center gap-1.5 bg-emerald-600/90 hover:bg-emerald-600 text-white px-2.5 py-1 rounded text-[12px] font-medium transition-colors disabled:opacity-60"
+              title={`Send to scope.io (${embedMode.mode})`}
+            >
+              <Send size={13} />
+              {EMBED_ACTION_LABEL[embedMode.mode] || "Send"}
+            </button>
+          )}
           <button onClick={() => setCode(DEFAULT_FIRMWARE)} className="hover:text-text-primary transition-colors" title="Reset to default">
             <RotateCcw size={15} />
           </button>
