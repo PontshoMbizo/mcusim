@@ -1,0 +1,33 @@
+# Self-host bundle for stmVSimulator. Mirrors nikaVSimulator/compose.yml.
+#
+# Prereq (run once on the host, or via deploy.sh): build the two hardened sandbox
+# images so the app can spawn them:
+#   podman build -t stm-sim-mainline -f sim/Dockerfile.mainline .
+#   podman build -t stm-sim-xpack    -f sim/Dockerfile.xpack .
+#
+# The app talks to the host's ROOTLESS Podman socket (uid 1000 in most setups —
+# check `id -u` on your host and adjust the volume line below; this VM uses 1001)
+# to launch one fully locked-down, network-less sandbox container per run
+# (src/lib/sandbox.js). Rootless Podman cannot escalate to host root even if the
+# app process is fully compromised — see docs/simulation-backend.md.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:3001:3000"
+    environment:
+      SIM_RUNTIME: podman
+      SIM_ENGINE: mainline
+      SIM_IMAGE_MAINLINE: localhost/stm-sim-mainline:latest
+      SIM_IMAGE_XPACK: localhost/stm-sim-xpack:latest
+      SIM_PODMAN_URL: unix:///var/run/podman/podman.sock
+      FRAME_ANCESTORS: "http://localhost:3000"
+    volumes:
+      # Rootless Podman socket from the host. Adjust the uid (1001 on this VM) to
+      # match `id -u` for whichever user runs `systemctl --user status podman.socket`.
+      - /run/user/1001/podman/podman.sock:/var/run/podman/podman.sock
+    restart: unless-stopped
+    mem_limit: 1g

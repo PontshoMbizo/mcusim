@@ -23,7 +23,9 @@ ENV NODE_ENV=production
 ENV PORT=3000 HOSTNAME=0.0.0.0
 
 # podman client to drive the host's rootless Podman socket for sandbox launches.
-RUN apk add --no-cache podman
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.15/community" >> /etc/apk/repositories \
+  && apk update \
+  && apk add --no-cache podman=3.4.7-r1
 
 # Standalone output bundles only the files the server needs.
 COPY --from=build /app/.next/standalone ./
