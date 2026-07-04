@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import EditorPane from "@/components/EditorPane";
 import SimulationPane from "@/components/SimulationPane";
 import { SimProvider } from "@/lib/simState";
-import { listenForInit } from "@/lib/scopeioBridge";
+import { listenForInit, announceReady } from "@/lib/scopeioBridge";
 import { BluePillBoard } from "@/boards/bluepill";
 
 const DEFAULT_SPLIT = 55;
@@ -16,7 +16,11 @@ export default function HomeClient() {
   // Plain standalone use or the /tools iframe (no bridge) leaves this null.
   const [embedMode, setEmbedMode] = useState(null);
 
-  useEffect(() => listenForInit(setEmbedMode), []);
+  useEffect(() => {
+    const unlisten = listenForInit(setEmbedMode);
+    announceReady();
+    return unlisten;
+  }, []);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
