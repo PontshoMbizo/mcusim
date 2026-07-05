@@ -5,6 +5,9 @@
 
 import { runSimulation } from "@/lib/sandbox";
 import { parseTrace } from "@/lib/trace";
+import { validateComponents, parseChipPins, MAX_COMPONENTS, MAX_WIRES } from "@/lib/chipSchema";
+import { generateCombinedSource } from "@/lib/chipCodegen";
+import BOARD_PINS from "@/data/pins.json";
 
 const MAX_CODE_BYTES = 200 * 1024; // reject oversized source outright
 const MAX_CONCURRENT = Number(process.env.SIM_MAX_CONCURRENT || 4);
@@ -32,9 +35,9 @@ export async function POST(request) {
     return Response.json({ ok: false, stage: "busy", log: "Simulator busy; try again shortly." }, { status: 429 });
   }
 
-  let code, engine;
+  let code, engine, components, wires;
   try {
-    ({ code, engine } = await request.json());
+    ({ code, engine, components, wires } = await request.json());
   } catch {
     return Response.json({ ok: false, stage: "input", log: "Invalid JSON body." }, { status: 400 });
   }
@@ -44,15 +47,35 @@ export async function POST(request) {
   if (engine != null && !ENGINES.has(engine)) {
     return Response.json({ ok: false, stage: "input", log: "`engine` must be 'mainline' or 'xpack'." }, { status: 400 });
   }
-  if (Buffer.byteLength(code, "utf8") > MAX_CODE_BYTES) {
+  components = components || [];
+  wires = wires || [];
+  if (!Array.isArray(components) || !Array.isArray(wires)) {
+    return Response.json({ ok: false, stage: "input", log: "`components`/`wires` must be arrays." }, { status: 400 });
+  }
+  if (components.length > MAX_COMPONENTS || wires.length > MAX_WIRES) {
+    return Response.json({ ok: false, stage: "input", log: "Too many components/wires." }, { status: 400 });
+  }
+
+  let combinedCode = code;
+  let diagnostics = [];
+  if (components.length || wires.length) {
+    diagnostics = validateComponents(components, wires, BOARD_PINS);
+    if (diagnostics.some((d) => d.severity === "error")) {
+      return Response.json({ ok: false, stage: "validation", log: "Component/wire validation failed.", diagnostics });
+    }
+    const componentsWithPins = components.map((c) => ({ ...c, pins: parseChipPins(c.source, c.name) }));
+    combinedCode = generateCombinedSource(code, componentsWithPins, wires);
+  }
+
+  if (Buffer.byteLength(combinedCode, "utf8") > MAX_CODE_BYTES) {
     return Response.json({ ok: false, stage: "input", log: "Source too large." }, { status: 413 });
   }
 
   inFlight++;
   try {
-    const r = await runSimulation(code, { engine });
+    const r = await runSimulation(combinedCode, { engine });
     if (!r.ok) {
-      return Response.json({ ok: false, stage: r.stage, log: r.log, engine: r.engine });
+      return Response.json({ ok: false, stage: r.stage, log: r.log, engine: r.engine, diagnostics });
     }
     const model = parseTrace(r.trace);
     return Response.json({
@@ -62,6 +85,7 @@ export async function POST(request) {
       model,
       log: r.log,
       complete: model.complete,
+      diagnostics,
     });
   } finally {
     inFlight--;

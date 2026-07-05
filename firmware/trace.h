@@ -14,9 +14,26 @@
  * Semihosting works on BOTH engines we spike: mainline qemu-system-arm
  * (-semihosting-config enable=on) and the xPack qemu-system-gnuarmeclipse fork.
  * No libc / no stdio is used — this is freestanding.
+ *
+ * External chips (co-simulated, compiled into this same firmware image — see
+ * src/lib/chipCodegen.js) hook in here via two WEAK symbols. With no chips/wires in a
+ * run neither symbol resolves, both calls below are no-ops, and trace_pin()/trace_read()
+ * behave exactly as before — this file is unchanged for every existing firmware.
+ * When chips ARE present, codegen emits a STRONG definition of each hook that dispatches
+ * by name to the wired net(s) and steps any chip whose input is on that net.
  */
 #ifndef TRACE_H
 #define TRACE_H
+
+/* Wiring hooks — weak so they're no-ops unless a run's generated glue overrides them. */
+extern void __trace_pin_hook(const char *name, unsigned value) __attribute__((weak));
+extern int __trace_read_hook(const char *name) __attribute__((weak));
+
+/* Tiny freestanding string-equality check — no libc under -nostdlib. */
+static inline int streq_(const char *a, const char *b) {
+  while (*a && *a == *b) { ++a; ++b; }
+  return *a == *b;
+}
 
 /* --- raw semihosting call: r0 = op, r1 = arg block, returns r0 --- */
 static inline int sh_call(int op, void *arg) {
@@ -66,6 +83,14 @@ static inline void trace_pin(const char *name, unsigned value) {
   line[p++] = '\n';
   line[p] = '\0';
   sh_write0(line);
+  if (__trace_pin_hook) __trace_pin_hook(name, value);
+}
+
+/* Read the current value of a named net driven by a wired external chip (e.g. a virtual
+ * button/sensor). Returns 0 if the name isn't wired to anything — a safe "not present"
+ * default, since there's no chip to have driven a real value. */
+static inline int trace_read(const char *name) {
+  return __trace_read_hook ? __trace_read_hook(name) : 0;
 }
 
 /* Free-form debug line. The host parser ignores any line that isn't "#n NAME 0|1",

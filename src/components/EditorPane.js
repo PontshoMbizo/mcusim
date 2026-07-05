@@ -18,7 +18,7 @@ const EMBED_ACTION_LABEL = { export: "Save starter", capture: "Capture golden", 
 export default function EditorPane({ embedMode, isFullscreen, onFullscreen, isCollapsed, onCollapse }) {
   const [code, setCode] = useState(DEFAULT_FIRMWARE);
   const [engine, setEngine] = useState("mainline"); // 'mainline' | 'xpack'
-  const { setModel } = useSim();
+  const { setModel, components, wires } = useSim();
   const [running, setRunning] = useState(false);
   const [status, setStatus] = useState(null); // { ok, text }
 
@@ -39,7 +39,7 @@ export default function EditorPane({ embedMode, isFullscreen, onFullscreen, isCo
     const res = await fetch("/api/simulate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, engine }),
+      body: JSON.stringify({ code, engine, components, wires }),
     });
     const data = await res.json();
     const model = data.ok ? setModel(data.model) : null;

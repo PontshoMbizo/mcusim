@@ -44,11 +44,48 @@ export function computePinStates(model, t) {
   return states;
 }
 
+// Remove wires that reference a component or pin that no longer exists. Called whenever
+// `components` changes so the wires array stays consistent (ported from nikaV's
+// simState.js — ­same shape, board-agnostic logic).
+export function pruneWires(wires, components) {
+  const compIds = new Set(components.map((c) => c.id));
+  const pruned = wires.filter((w) => {
+    for (const ep of [w.a, w.b]) {
+      if (ep?.comp != null) {
+        if (!compIds.has(ep.comp)) return false;
+        const comp = components.find((c) => c.id === ep.comp);
+        if (!(comp.pins || []).some((p) => p.name === ep.pin)) return false;
+      }
+    }
+    return true;
+  });
+  return pruned.length === wires.length ? wires : pruned;
+}
+
 const SimContext = createContext(null);
 
 export function SimProvider({ children, board }) {
   const [model, setModelState] = useState(DEFAULT_MODEL);
   const [timeCursor, setTimeCursor] = useState(0);
+
+  // External custom chip components ({id,name,x,y,pins,source,rotation}[]) and their
+  // wires ({id,a,b,waypoints}[]). Whenever components change, any wires that reference
+  // removed components or pins are automatically dropped (see pruneWires above).
+  const [components, setComponentsRaw] = useState([]);
+  const [wires, setWiresRaw] = useState([]);
+
+  const setComponents = (next) => {
+    setComponentsRaw((prevComponents) => {
+      const nextComponents = typeof next === "function" ? next(prevComponents) : next;
+      setWiresRaw((prevWires) => pruneWires(prevWires, nextComponents));
+      return nextComponents;
+    });
+  };
+
+  const setWires = (next) => {
+    if (typeof next === "function") setWiresRaw(next);
+    else setWiresRaw(() => next);
+  };
 
   // Accepts the API trace model (or null to clear). Returns the UI model so callers can
   // read e.g. signal count immediately.
@@ -70,8 +107,12 @@ export function SimProvider({ children, board }) {
       pinStates,
       timeMax: model.timeMax,
       board,
+      components,
+      setComponents,
+      wires,
+      setWires,
     }),
-    [model, timeCursor, pinStates, board]
+    [model, timeCursor, pinStates, board, components, wires]
   );
   return <SimContext.Provider value={value}>{children}</SimContext.Provider>;
 }
