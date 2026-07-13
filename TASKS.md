@@ -1,7 +1,7 @@
-# stmVSimulator — Tasks
+# mcusim — Tasks
 
 Target: STM32F103C8 "Blue Pill" · bare-metal C · QEMU backend · Next.js frontend.
-Mirrors nikaVSimulator's architecture; reuse its frontend + model where possible.
+Mirrors fpgasim's architecture; reuse its frontend + model where possible.
 
 ## Phase 0 — Spike the backend (de-risk first)
 

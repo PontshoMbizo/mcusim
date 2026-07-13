@@ -1,4 +1,4 @@
-# CLAUDE.md — stmVSimulator
+# CLAUDE.md — mcusim
 
 Context for Claude working in this project. Read at session start.
 
@@ -9,7 +9,7 @@ An in-browser simulator for the **STM32F103C8T6 "Blue Pill"** board. The user wr
 cross-compiled and executed in a sandboxed **QEMU** ARM emulator, and the resulting
 peripheral activity drives a live interactive board view (pins light up, waveforms render).
 
-This is the MCU analogue of `nikaVSimulator` (Tang Nano 9K FPGA + Verilog + iverilog).
+This is the MCU analogue of `fpgasim` (Tang Nano 9K FPGA + Verilog + iverilog).
 Reuse its proven shape wherever it maps cleanly:
 
 - Next.js app, `src/app/api/simulate/route.js` as the entry contract
