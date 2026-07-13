@@ -12,6 +12,12 @@
 extern uint32_t _sidata, _sdata, _edata, _sbss, _ebss, _estack;
 extern int main(void);
 
+/* Lockstep-bridge boot hook (fulgurlab co-simulation). Weak no-op normally; the
+ * bridge's generated glue provides a strong version that reads the first quantum
+ * command and arms SysTick BEFORE main() runs. Batch runs are unaffected. */
+void __lockstep_boot(void) __attribute__((weak));
+void __lockstep_boot(void) {}
+
 void Reset_Handler(void);
 void Default_Handler(void);
 void NMI_Handler(void);
@@ -55,6 +61,7 @@ void Reset_Handler(void) {
   /* zero the .bss section */
   for (uint32_t *b = &_sbss; b < &_ebss; ++b) *b = 0;
 
+  __lockstep_boot();
   main();
   /* main returned (e.g. SYS_EXIT no-op): surface it rather than hang. */
   sh_write0_("##END main-returned\n");

@@ -18,7 +18,8 @@ COPY firmware/trace.h       /opt/fw/trace.h
 # Non-root; everything happens in a tmpfs /work mounted at run time.
 RUN adduser -D -u 1000 sim
 COPY sim/entrypoint.sh /usr/local/bin/run-sim
-RUN chmod +x /usr/local/bin/run-sim
+COPY sim/entrypoint-lockstep.sh /usr/local/bin/run-lockstep
+RUN chmod +x /usr/local/bin/run-sim /usr/local/bin/run-lockstep
 
 ENV SIM_ENGINE=mainline
 USER sim

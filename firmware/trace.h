@@ -105,4 +105,12 @@ static inline void trace_end(void) {
   sh_write0("##END\n");
 }
 
+/* Declare the pins exposed over the fulgurlab lockstep bridge, e.g.
+ *     LOCKSTEP_PINS("PC13:out", "PA0:in");
+ * The declaration is *parsed by the bridge host* (src/lib/lockstepGlue.js) to generate
+ * the co-simulation glue; in the firmware itself it expands to nothing. Outputs must be
+ * signals the firmware traces via trace_pin(); inputs are read via trace_read().
+ * Harmless (and meaningless) in plain batch runs. */
+#define LOCKSTEP_PINS(...) extern int __lockstep_pins_marker_
+
 #endif /* TRACE_H */
