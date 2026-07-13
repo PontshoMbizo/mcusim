@@ -53,3 +53,13 @@ waveform pane is reusable).
 - Project notes, decisions (ADRs), and learnings live in
   `~/Workspace/second brain/10 - Projects/STM32 Simulator/`.
 - Commit frequently.
+
+## Definition of done
+
+- `npm test` and `npm run lint` pass.
+- Simulate-path changes: run one `examples/` firmware end-to-end
+  (compile → QEMU → trace → board view) via `POST /api/simulate` and sanity-check the trace.
+- Sandbox changes: confirm the lock-down posture survived — ephemeral, no network,
+  read-only FS, non-root, resource-capped.
+- Peripheral/register behaviour is resolved against RM0008 or the vault notes,
+  never from memory (core-loop rule 8 applies doubly here).
