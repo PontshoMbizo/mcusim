@@ -30,6 +30,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Install arm toolchain + QEMU (enables the gated lockstep e2e)
+        run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi qemu-system-arm
+
       - name: Test
         run: npm run test
 
