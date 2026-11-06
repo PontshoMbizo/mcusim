@@ -1,6 +1,6 @@
 // chipGeometry.js — pure geometry for external chip (DIP) rendering.
 // No React, no browser APIs — safe to import from tests and server code.
-// Ported near-verbatim from nikaVSimulator — this geometry is board-agnostic (chip
+// Ported near-verbatim from fpgasim — this geometry is board-agnostic (chip
 // rotation/routing math doesn't care whether pins are Verilog ports or C `_step()` pins).
 //
 // Coordinate system: SVG board-canvas space (same as pins.json x/y).

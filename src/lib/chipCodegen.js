@@ -1,4 +1,4 @@
-// Codegen for external chips (chipSchema.js) — mirrors nikaVSimulator's
+// Codegen for external chips (chipSchema.js) — mirrors fpgasim's
 // generateComponentLayer (src/lib/testbench.js), adapted for C/QEMU instead of
 // Verilog/iverilog. See docs/plan for the full design; short version:
 //

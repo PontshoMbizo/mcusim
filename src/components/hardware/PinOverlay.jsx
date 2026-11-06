@@ -6,7 +6,7 @@ import { COLORS, STATE_COLORS } from "../../lib/theme";
  * hit target) so the photo reads cleanly; driven or hovered pins get a colored ring/disc.
  *
  * Optional wiring-mode props (set by HardwareViewer when ExternalChipLayer is in
- * wiring mode), mirroring nikaVSimulator's PinOverlay:
+ * wiring mode), mirroring fpgasim's PinOverlay:
  *   isWiringTarget       — bool; when true, pin acts as a wire endpoint
  *   onWiringTargetClick  — () => void; commit the in-progress wire to this pin
  */

@@ -7,7 +7,7 @@
 // software bus, not real silicon-level tapping: see firmware/trace.h and chipCodegen.js
 // for exactly how a chip observes/drives a board pin.
 //
-// Mirrors nikaVSimulator's componentSchema.js structurally (same caps shape, same
+// Mirrors fpgasim's componentSchema.js structurally (same caps shape, same
 // diagnostic {severity, message, port?} format) — adapted for C instead of Verilog:
 // no bit widths (every board pin here is 1-bit GPIO), no .cst layer (board pin ids ARE
 // the GPIO names), no inout pins.

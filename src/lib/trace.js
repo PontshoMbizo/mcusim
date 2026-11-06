@@ -5,7 +5,7 @@
 //     ##END                        terminates a well-formed trace
 // Anything else (QEMU banners, $printf-style logs) is ignored gracefully.
 //
-// The model is intentionally VCD-shaped so the waveform pane ported from nikaVSimulator
+// The model is intentionally VCD-shaped so the waveform pane ported from fpgasim
 // can consume it unchanged: each signal is a list of { t, v } transitions, where `t` is
 // the event sequence index (a true timebase replaces this once SysTick lands).
 

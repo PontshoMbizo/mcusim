@@ -1,7 +1,7 @@
 // POST /api/simulate — compile + run untrusted bare-metal C for the STM32F103 in an
 // ephemeral sandbox and return the resulting pin trace + parsed board model. Isolation
 // lives in src/lib/sandbox.js; trace parsing in src/lib/trace.js. Ported from
-// nikaVSimulator's route (Verilog/VCD) to firmware/trace, keeping the same guard rails.
+// fpgasim's route (Verilog/VCD) to firmware/trace, keeping the same guard rails.
 
 import { runSimulation } from "@/lib/sandbox";
 import { parseTrace } from "@/lib/trace";

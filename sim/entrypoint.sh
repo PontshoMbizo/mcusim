@@ -1,5 +1,5 @@
 #!/bin/sh
-# Sandbox contract (mirrors nikaVSimulator): read the user's bare-metal C on stdin,
+# Sandbox contract (mirrors fpgasim): read the user's bare-metal C on stdin,
 # emit the pin/peripheral TRACE on stdout, put all compile/runtime logs on stderr.
 # Exit codes name the failing stage so the launcher can label errors:
 #   2 = compile (arm-none-eabi-gcc) failure

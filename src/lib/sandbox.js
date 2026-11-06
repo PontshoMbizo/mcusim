@@ -1,6 +1,6 @@
 // Server-only. Compiles + runs ONE untrusted STM32 firmware inside an ephemeral,
 // locked-down container and returns its pin/peripheral trace. Ported from
-// nikaVSimulator's sandbox.js — same defense-in-depth posture (container resource caps +
+// fpgasim's sandbox.js — same defense-in-depth posture (container resource caps +
 // the runtime's own timeout + a host-side SIGKILL), engine-agnostic via SIM_ENGINE.
 //
 // Contract with sim/entrypoint.sh: C source in via stdin, TRACE out via stdout, logs via

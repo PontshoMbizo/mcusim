@@ -1,7 +1,7 @@
 # Simulation Backend
 
 How stmVSimulator turns bare-metal C in the editor into a live pin trace, safely, with
-untrusted code from anyone on the internet. The design mirrors nikaVSimulator (Verilog →
+untrusted code from anyone on the internet. The design mirrors fpgasim (Verilog →
 VCD); here it is C → firmware → QEMU → pin trace.
 
 ## Architecture
@@ -97,7 +97,7 @@ Response (HTTP 200 on a completed run; 4xx for bad input / limits):
 `--security-opt no-new-privileges` · `--pids-limit` · `--memory`/`--memory-swap` ·
 `--cpus` · `--user 1000:1000`. Enforced twice: container caps + the runtime's own
 `--timeout` backstop, plus a host-side `SIGKILL` as the primary stop (so runaway runs are
-reported as `timeout`). Identical posture to nikaVSimulator.
+reported as `timeout`). Identical posture to fpgasim.
 
 ## Validating the spike (needs a container runtime — not the dev sandbox)
 

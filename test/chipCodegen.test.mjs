@@ -1,4 +1,4 @@
-// Unit tests for chip wiring codegen (mirrors nikaVSimulator's generateComponentLayer
+// Unit tests for chip wiring codegen (mirrors fpgasim's generateComponentLayer
 // tests in components.test.mjs — golden-ish assertions on the generated glue text).
 import { test } from "node:test";
 import assert from "node:assert/strict";

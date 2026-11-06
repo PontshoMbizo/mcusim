@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * stmVSimulator design tokens (ported from nikaVSimulator).
+ * stmVSimulator design tokens (ported from fpgasim).
  * Each token under @theme becomes a Tailwind utility, e.g.
  *   --color-panel -> bg-panel / border-panel / text-panel
  * SVG fill/stroke literals live in src/lib/theme.js and mirror these values.

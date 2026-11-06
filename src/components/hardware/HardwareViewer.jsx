@@ -53,7 +53,7 @@ export default function HardwareViewer({ board }) {
   // nextChipPosition) in the free space beside the board image. Without extra canvas
   // width, the SVG's own viewBox clips at BOARD_WIDTH and a newly-created chip renders
   // completely outside the visible/interactive canvas (a bug found and fixed in
-  // nikaVSimulator — applying the fix here from day one instead of rediscovering it).
+  // fpgasim — applying the fix here from day one instead of rediscovering it).
   const CHIP_WORKSPACE_WIDTH = 280;
   const CANVAS_WIDTH = BOARD_WIDTH + CHIP_WORKSPACE_WIDTH;
 

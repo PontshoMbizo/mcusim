@@ -4,7 +4,7 @@ An in-browser simulator for the **STM32 "Blue Pill" (STM32F103C8T6)**. Write bar
 C in a Monaco editor, run it through a sandboxed **QEMU** ARM backend, and watch the
 board's GPIO pins, timers, and peripherals come alive in real time.
 
-Spiritual successor to [nikaVSimulator](../nikaVSimulator) (which does the same for the
+Spiritual successor to [fpgasim](https://github.com/PontshoMbizo/fpgasim) (which does the same for the
 Tang Nano 9K FPGA), rebuilt around an MCU + firmware execution model instead of Verilog.
 
 ## How it works (target architecture)
