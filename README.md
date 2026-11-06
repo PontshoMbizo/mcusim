@@ -1,41 +1,69 @@
-# stmVSimulator
+# mcusim
 
-An in-browser simulator for the **STM32 "Blue Pill" (STM32F103C8T6)**. Write bare-metal
-C in a Monaco editor, run it through a sandboxed **QEMU** ARM backend, and watch the
-board's GPIO pins, timers, and peripherals come alive in real time.
+**Write bare-metal C for the STM32F103 "Blue Pill" in your browser and watch it run on a virtual board.**
+No toolchain install and no hardware needed.
 
-Spiritual successor to [fpgasim](https://github.com/PontshoMbizo/fpgasim) (which does the same for the
-Tang Nano 9K FPGA), rebuilt around an MCU + firmware execution model instead of Verilog.
+<!-- TODO: add a screenshot or short GIF of the editor + board view + waveforms here -->
 
-## How it works (target architecture)
+Companion to [fpgasim](https://github.com/PontshoMbizo/fpgasim), which does the same for the Tang Nano 9K FPGA with Verilog. mcusim swaps the Verilog simulator for an MCU execution model: firmware is cross-compiled and run under QEMU.
+
+## How it works
 
 ```
-Editor (bare-metal C)
-   │  POST /api/simulate { code }
+Editor (bare-metal C, Monaco)
+   │  POST /api/simulate { code, engine? }
    ▼
-/api/simulate ── rate limit + size cap ──► sandboxed container
-   │                                          arm-none-eabi-gcc → firmware.elf
-   │                                          qemu-system-arm (-M ... , no network)
-   │                                          peripheral/GPIO trace → stdout
+Next.js API route ── rate limit, concurrency cap, size cap
    ▼
-parse trace → board model → live pin overlay + signal/waveform pane
+Ephemeral container per run
+   arm-none-eabi-gcc → firmware.elf → qemu-system-arm → pin trace
+   no network, read-only filesystem, non-root, CPU/memory/PID caps, dual timeout
+   ▼
+Trace parser → board-state model → pin overlay + waveform pane
 ```
 
-## Getting started
+You write register-level C (RCC, GPIO, TIM, NVIC; no HAL). The firmware template provides the F103 startup code, linker script and a semihosting trace helper. See [docs/simulation-backend.md](docs/simulation-backend.md) for the sandbox design and the observability trade-offs.
 
-> Not scaffolded yet — see `TASKS.md` for the build order.
+## Status
+
+Working:
+- Sandboxed compile-and-run pipeline and `/api/simulate` contract
+- Trace format and parser (unit tested)
+- Self-contained SVG Blue Pill board with 44 pins, alternate functions, inspector, search and legend
+- C editor with a bare-metal blink starter, waveform pane, CI and deployment
+
+In progress:
+- End-to-end verification of the QEMU pipeline on the container host
+- Choosing the default engine (see below)
+- Peripherals beyond GPIO (SysTick, timers/PWM, USART) and an example gallery
+
+## Design decisions
+
+| Decision | Why |
+|---|---|
+| QEMU as the execution engine | Runs real ARM Cortex-M3 machine code, so the C you write is the C that executes |
+| Two engines spiked: mainline QEMU and xPack QEMU | Mainline QEMU has no STM32F103 machine and does not reliably model GPIO output, so it uses a semihosting trace. xPack models GPIO natively. The default will be chosen from measurements |
+| Locked-down container per run | Untrusted C from the internet: no network, read-only filesystem, non-root, resource caps, auto-kill |
+| Trace shaped like VCD | The waveform pane and board model are shared with fpgasim |
+
+## Run it locally
+
+Requires Node 20+ and Docker.
 
 ```bash
 npm install
-npm run dev      # Next.js dev server on http://localhost:3000
+# build the sandbox images once, see sim/README.md
+npm run dev          # http://localhost:3000
 ```
 
-## Stack
+## Tests
 
-- Next.js / React frontend (board viewer, pin overlay, Monaco editor)
-- `arm-none-eabi-gcc` cross-compiler + linker script + startup for STM32F103
-- `qemu-system-arm` as the execution engine, in a locked-down container
-- Shared trace → board-state model (GPIO levels, timer state, UART output)
+```bash
+npm test             # trace parser and chip model unit tests
+```
 
-See `CLAUDE.md` for working conventions and `~/Workspace/second brain/10 - Projects/STM32 Simulator/`
-for design notes and decisions.
+CI runs lint, tests and a production build.
+
+## Licence
+
+TODO: add a licence file (MIT suggested).

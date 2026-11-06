@@ -1,4 +1,4 @@
-# Self-host bundle for stmVSimulator. Mirrors nikaVSimulator/compose.yml.
+# Self-host bundle for mcusim. Mirrors nikaVSimulator/compose.yml.
 #
 # Prereq (run once on the host, or via deploy.sh): build the two hardened sandbox
 # images so the app can spawn them:

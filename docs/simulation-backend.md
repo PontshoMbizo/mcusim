@@ -1,6 +1,6 @@
 # Simulation Backend
 
-How stmVSimulator turns bare-metal C in the editor into a live pin trace, safely, with
+How mcusim turns bare-metal C in the editor into a live pin trace, safely, with
 untrusted code from anyone on the internet. The design mirrors fpgasim (Verilog →
 VCD); here it is C → firmware → QEMU → pin trace.
 
