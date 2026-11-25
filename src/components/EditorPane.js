@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import Editor from "@monaco-editor/react";
-import { Code2, Play, Loader, RotateCcw, Cpu, Send } from "lucide-react";
-import PaneHeader from "./ui/PaneHeader";
+import { Code2, Play, Loader, RotateCcw, Send, Maximize2, Minimize2, ChevronUp, ChevronDown, CircleCheck, CircleAlert } from "lucide-react";
+import { defineSuiteThemes, monoFontFamily, useSuiteMonacoTheme } from "../lib/monacoTheme";
 import { useSim } from "../lib/simState";
 import { DEFAULT_FIRMWARE } from "../lib/templateDefaults";
 import { sendResult, extractChanges } from "../lib/scopeioBridge";
@@ -21,6 +21,7 @@ export default function EditorPane({ embedMode, isFullscreen, onFullscreen, isCo
   const { setModel, components, wires } = useSim();
   const [running, setRunning] = useState(false);
   const [status, setStatus] = useState(null); // { ok, text }
+  const monacoTheme = useSuiteMonacoTheme();
 
   // Seed the editor from the embed's starter/engine exactly once, the first
   // time a scopeio:init arrives — not on every embedMode reference change, so
@@ -99,57 +100,69 @@ export default function EditorPane({ embedMode, isFullscreen, onFullscreen, isCo
     }
   };
 
-  return (
-    <div className="w-full h-full flex flex-col bg-panel rounded-lg border border-edge overflow-hidden font-sans shadow-xl">
-      <PaneHeader isFullscreen={isFullscreen} onFullscreen={onFullscreen} isCollapsed={isCollapsed} onCollapse={onCollapse}>
-        <div className="flex items-center gap-2 text-text-secondary font-semibold text-[13px]">
-          <Code2 size={16} className="text-accent" />
-          Firmware · main.c
-        </div>
-      </PaneHeader>
+  const iconBtn = "inline-flex items-center justify-center min-w-[27px] min-h-[27px] rounded-suite text-text-muted hover:bg-accent-bg hover:text-text-primary transition-colors";
 
-      {/* toolbar */}
-      <div className="h-10 bg-panel flex items-center justify-between px-3 shrink-0">
-        <div className="flex items-center gap-2 text-[12px] text-text-muted">
-          <Cpu size={14} className="text-accent/70" />
-          <label className="flex items-center gap-1.5">
+  return (
+    <div className="w-full h-full flex flex-col bg-panel overflow-hidden font-sans">
+      {/* toolbar: Run first, as across the suite */}
+      <div role="toolbar" aria-label="Firmware toolbar" className="min-h-[41px] bg-base border-b border-edge flex items-center flex-wrap gap-[5px] px-[9px] py-[6px] shrink-0">
+        <button
+          type="button"
+          onClick={handleRun}
+          disabled={running}
+          className="inline-flex items-center gap-1.5 min-h-[28px] px-[11px] rounded-suite border border-run bg-run text-white text-[13px] font-medium hover:brightness-110 disabled:opacity-60 transition"
+          title="Build + run firmware"
+        >
+          {running ? <Loader size={13} className="animate-spin" /> : <Play size={13} fill="currentColor" />}
+          {running ? "Running" : "Run"}
+        </button>
+        {embedMode && (
+          <button
+            type="button"
+            onClick={handleEmbedAction}
+            disabled={running}
+            className="inline-flex items-center gap-1.5 min-h-[28px] px-2.5 rounded-suite border border-accent bg-accent text-on-accent text-[13px] font-medium hover:brightness-110 disabled:opacity-60 transition"
+            title={`Send to scope.io (${embedMode.mode})`}
+          >
+            <Send size={13} />
+            {EMBED_ACTION_LABEL[embedMode.mode] || "Send"}
+          </button>
+        )}
+        <span className="w-px h-[18px] bg-edge mx-1" aria-hidden />
+        <button type="button" onClick={() => setCode(DEFAULT_FIRMWARE)} className={iconBtn} title="Reset to default" aria-label="Reset to default">
+          <RotateCcw size={15} />
+        </button>
+        <div className="ml-auto flex items-center gap-[7px] text-text-muted text-[13px]">
+          <label className="flex items-center gap-[5px]">
             Engine
             <select
               value={engine}
               onChange={(e) => setEngine(e.target.value)}
-              className="border border-edge bg-panel text-text-secondary rounded px-2 py-1 text-[12px] focus:outline-none focus:border-focus"
+              className="min-h-[28px] border border-edge bg-panel text-text-primary rounded-suite px-1.5 text-[12px] focus:outline-none focus:border-accent"
               title="QEMU backend"
             >
               <option value="mainline">mainline (qemu-system-arm)</option>
               <option value="xpack">xPack (native GPIO)</option>
             </select>
           </label>
-        </div>
-        <div className="flex items-center gap-3 text-text-muted">
-          <button
-            onClick={handleRun}
-            disabled={running}
-            className="flex items-center gap-1.5 bg-accent/90 hover:bg-accent text-white px-2.5 py-1 rounded text-[12px] font-medium transition-colors disabled:opacity-60"
-            title="Build + run firmware"
-          >
-            {running ? <Loader size={13} className="animate-spin" /> : <Play size={13} />}
-            {running ? "Running" : "Run"}
-          </button>
-          {embedMode && (
-            <button
-              onClick={handleEmbedAction}
-              disabled={running}
-              className="flex items-center gap-1.5 bg-emerald-600/90 hover:bg-emerald-600 text-white px-2.5 py-1 rounded text-[12px] font-medium transition-colors disabled:opacity-60"
-              title={`Send to scope.io (${embedMode.mode})`}
-            >
-              <Send size={13} />
-              {EMBED_ACTION_LABEL[embedMode.mode] || "Send"}
+          {onFullscreen && (
+            <button type="button" onClick={onFullscreen} className={iconBtn} title={isFullscreen ? "Exit fullscreen" : "Fullscreen"} aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"}>
+              {isFullscreen ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
             </button>
           )}
-          <button onClick={() => setCode(DEFAULT_FIRMWARE)} className="hover:text-text-primary transition-colors" title="Reset to default">
-            <RotateCcw size={15} />
-          </button>
+          {onCollapse && (
+            <button type="button" onClick={onCollapse} className={iconBtn} title={isCollapsed ? "Expand" : "Collapse"} aria-label={isCollapsed ? "Expand" : "Collapse"}>
+              {isCollapsed ? <ChevronDown size={15} /> : <ChevronUp size={15} />}
+            </button>
+          )}
         </div>
+      </div>
+
+      {/* file strip */}
+      <div className="flex items-center gap-1 px-[5px] py-1 bg-elevated border-b border-rule shrink-0 text-[12px]">
+        <Code2 size={13} className="text-text-muted mx-1" aria-hidden />
+        <span className="inline-flex items-center min-h-[25px] px-2 rounded-suite border border-edge bg-panel font-medium">main.c</span>
+        <span className="ml-1.5 text-[11px] text-text-muted">Firmware</span>
       </div>
 
       {/* editor */}
@@ -158,15 +171,16 @@ export default function EditorPane({ embedMode, isFullscreen, onFullscreen, isCo
           height="100%"
           path="main.c"
           defaultLanguage="c"
-          theme="vs-dark"
+          theme={monacoTheme}
+          beforeMount={defineSuiteThemes}
           value={code}
           onChange={(val) => setCode(val ?? "")}
           options={{
             minimap: { enabled: false },
-            fontSize: 14,
-            fontFamily: "'Menlo', 'Monaco', 'Courier New', monospace",
-            lineHeight: 24,
-            padding: { top: 16 },
+            fontSize: 13,
+            fontFamily: monoFontFamily(),
+            lineHeight: 22,
+            padding: { top: 10 },
             wordWrap: "on",
             scrollBeyondLastLine: false,
             smoothScrolling: true,
@@ -176,12 +190,13 @@ export default function EditorPane({ embedMode, isFullscreen, onFullscreen, isCo
         />
       </div>
 
-      {/* footer */}
-      <div className="h-8 bg-panel border-t border-edge/50 flex items-center justify-between px-4 shrink-0 text-[12px] text-text-muted">
-        <div className={`truncate font-mono ${status ? (status.ok ? "text-accent" : "text-danger") : ""}`} title={status?.text || ""}>
+      {/* status line */}
+      <div className="min-h-[26px] bg-base border-t border-edge flex items-center gap-1.5 px-2.5 shrink-0 text-[11px] text-text-muted">
+        {status && (status.ok ? <CircleCheck size={13} className="text-ok shrink-0" /> : <CircleAlert size={13} className="text-danger shrink-0" />)}
+        <div className={`truncate font-mono ${status ? (status.ok ? "text-text-primary" : "text-danger") : ""}`} title={status?.text || ""}>
           {status ? status.text : "Ready"}
         </div>
-        <div className="shrink-0 pl-3">STM32F103C8 · Cortex-M3</div>
+        <div className="ml-auto shrink-0 pl-3">STM32F103C8 · Cortex-M3</div>
       </div>
     </div>
   );

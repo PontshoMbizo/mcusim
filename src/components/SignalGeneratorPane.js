@@ -42,8 +42,9 @@ export default function SignalGeneratorPane() {
 
   if (!signals.length) {
     return (
-      <div className="h-full w-full flex items-center justify-center text-text-muted text-sm">
-        Run firmware to capture a pin trace.
+      <div className="h-full w-full flex flex-col items-center justify-center bg-panel text-text-muted text-[13px]">
+        <div className="text-text-primary">No trace yet</div>
+        <div className="mt-1 text-[12px]">Run firmware to capture a pin trace.</div>
       </div>
     );
   }
@@ -51,12 +52,12 @@ export default function SignalGeneratorPane() {
   return (
     <div className="absolute inset-0 flex bg-panel text-text-secondary overflow-hidden font-sans">
       {/* signal list */}
-      <div className="w-[170px] h-full flex flex-col border-r border-edge bg-panel shrink-0">
-        <div className="h-8 flex items-center px-3 text-[11px] uppercase tracking-wide text-text-muted border-b border-edge">
+      <div className="w-[170px] h-full flex flex-col border-r border-edge bg-elevated shrink-0">
+        <div className="h-8 flex items-center px-3 text-[11px] text-text-muted border-b border-edge">
           Signals
         </div>
         {signals.map((s) => (
-          <div key={s.id} className="flex items-center px-3 text-[12px] font-mono text-text-secondary border-b border-edge/40"
+          <div key={s.id} className="flex items-center px-3 text-[11px] font-mono text-text-primary border-b border-rule"
             style={{ height: ROW_H }}>
             {s.name}
           </div>
@@ -66,7 +67,7 @@ export default function SignalGeneratorPane() {
       {/* waveform canvas */}
       <div className="flex-1 overflow-auto custom-scrollbar" onWheel={handleWheel} onClick={handleSeek}>
         <div style={{ width: canvasW }}>
-          <div className="h-8 relative border-b border-edge text-[10px] text-text-muted">
+          <div className="h-8 relative border-b border-edge text-[10px] font-mono text-text-muted">
             {Array.from({ length: timeMax + 1 }).map((_, t) => (
               <span key={t} className="absolute top-2 -translate-x-1/2 tabular-nums" style={{ left: px(t) }}>#{t}</span>
             ))}
@@ -74,7 +75,7 @@ export default function SignalGeneratorPane() {
             <div className="absolute top-0 bottom-0 w-px bg-info" style={{ left: px(timeCursor) }} />
           </div>
           {signals.map((s) => (
-            <svg key={s.id} width={canvasW} height={ROW_H} className="block border-b border-edge/40">
+            <svg key={s.id} width={canvasW} height={ROW_H} className="block border-b border-rule">
               {renderWave(s)}
               <line x1={px(timeCursor)} y1="0" x2={px(timeCursor)} y2={ROW_H} stroke={COLORS.info} strokeWidth="1" opacity="0.5" />
             </svg>

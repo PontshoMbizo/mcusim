@@ -10,6 +10,7 @@ import {
   MAX_COMPONENTS,
 } from '../../lib/chipSchema';
 import { nextChipPosition, nextRotation } from './chipGeometry';
+import { defineSuiteThemes, monoFontFamily, useSuiteMonacoTheme } from '../../lib/monacoTheme';
 
 // ---- helpers -----------------------------------------------------------------
 
@@ -51,10 +52,10 @@ function ChipRow({ chip, isSelected, onSelect, onDelete, onRotate }) {
   const outputCount = chip.pins.filter((p) => p.dir !== 'input').length;
   return (
     <div
-      className={`flex items-center gap-2 px-2 py-1.5 rounded border text-[12px] cursor-pointer transition-colors ${
+      className={`flex items-center gap-2 px-2 py-1.5 rounded-suite border text-[12px] cursor-pointer transition-colors ${
         isSelected
-          ? 'border-accent bg-accent/10 text-text-primary'
-          : 'border-edge bg-elevated text-text-primary hover:bg-hover'
+          ? 'border-accent bg-accent-bg text-text-primary'
+          : 'border-edge bg-panel text-text-primary hover:bg-accent-bg'
       }`}
       onClick={onSelect}
     >
@@ -112,8 +113,8 @@ function AddChipForm({ components, boardWidth, boardHeight, onAdd, onCancel }) {
   };
 
   return (
-    <div className="p-3 bg-elevated border border-edge rounded-lg flex flex-col gap-2 text-[12px]">
-      <div className="text-[11px] font-semibold text-text-secondary">Add chip</div>
+    <div className="p-3 bg-panel border border-edge rounded-suite flex flex-col gap-2 text-[12px]">
+      <div className="text-[12px] font-medium text-text-primary">Add chip</div>
       <label className="flex flex-col gap-1 text-[11px] text-text-muted">
         Chip name
         <input
@@ -122,7 +123,7 @@ function AddChipForm({ components, boardWidth, boardHeight, onAdd, onCancel }) {
           onChange={(e) => { setName(e.target.value); setError(null); }}
           onKeyDown={(e) => { if (e.key === 'Enter') handleAdd(); if (e.key === 'Escape') onCancel(); }}
           placeholder="my_chip"
-          className={`bg-base border rounded px-2 py-1 text-[12px] text-text-primary font-mono outline-none focus:border-accent ${
+          className={`bg-panel border rounded-suite px-2 min-h-[28px] text-[12px] text-text-primary font-mono outline-none focus:border-accent ${
             name && !nameValid ? 'border-danger' : 'border-edge'
           }`}
         />
@@ -133,7 +134,7 @@ function AddChipForm({ components, boardWidth, boardHeight, onAdd, onCancel }) {
           value={inputsStr}
           onChange={(e) => setInputsStr(e.target.value)}
           placeholder="A,B"
-          className="bg-base border border-edge rounded px-2 py-1 text-[12px] text-text-primary font-mono outline-none focus:border-accent"
+          className="bg-panel border border-edge rounded-suite px-2 min-h-[28px] text-[12px] text-text-primary font-mono outline-none focus:border-accent"
         />
       </label>
       <label className="flex flex-col gap-1 text-[11px] text-text-muted">
@@ -142,18 +143,18 @@ function AddChipForm({ components, boardWidth, boardHeight, onAdd, onCancel }) {
           value={outputsStr}
           onChange={(e) => setOutputsStr(e.target.value)}
           placeholder="C,D"
-          className="bg-base border border-edge rounded px-2 py-1 text-[12px] text-text-primary font-mono outline-none focus:border-accent"
+          className="bg-panel border border-edge rounded-suite px-2 min-h-[28px] text-[12px] text-text-primary font-mono outline-none focus:border-accent"
         />
       </label>
       {error && <div className="text-[11px] text-danger">{error}</div>}
       <div className="flex justify-end gap-2 pt-1">
-        <button onClick={onCancel} className="px-2.5 py-1 rounded text-[12px] text-text-secondary hover:bg-hover">
+        <button onClick={onCancel} className="min-h-[28px] px-2.5 rounded-suite border border-edge bg-panel text-[12px] text-text-primary hover:bg-accent-bg">
           Cancel
         </button>
         <button
           onClick={handleAdd}
           disabled={!name.trim()}
-          className="px-2.5 py-1 rounded text-[12px] font-medium bg-accent/90 hover:bg-accent text-white disabled:opacity-40 disabled:cursor-not-allowed"
+          className="min-h-[28px] px-2.5 rounded-suite text-[12px] font-medium bg-accent hover:brightness-110 text-on-accent disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Add
         </button>
@@ -169,6 +170,7 @@ function AddChipForm({ components, boardWidth, boardHeight, onAdd, onCancel }) {
  * runnable the way a bare Verilog module is under an auto-generated testbench.
  */
 function ChipEditor({ chip, onSourceChange }) {
+  const monacoTheme = useSuiteMonacoTheme();
   const [parseError, setParseError] = useState(null);
 
   // Debounced re-parse on source change — fires after 600 ms idle.
@@ -196,18 +198,20 @@ function ChipEditor({ chip, onSourceChange }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="border border-edge rounded overflow-hidden" style={{ height: 220 }}>
+      <div className="border border-edge rounded-suite overflow-hidden" style={{ height: 220 }}>
         <Editor
           height="220px"
           path={`chip-${chip.id}.c`}
           defaultLanguage="c"
-          theme="vs-dark"
+          theme={monacoTheme}
+          beforeMount={defineSuiteThemes}
           value={chip.source}
           onChange={handleChange}
           options={{
             minimap: { enabled: false },
             fontSize: 12,
             lineHeight: 18,
+            fontFamily: monoFontFamily(),
             scrollBeyondLastLine: false,
             wordWrap: 'on',
           }}
@@ -215,7 +219,7 @@ function ChipEditor({ chip, onSourceChange }) {
       </div>
 
       {parseError && (
-        <div className="flex items-start gap-1.5 text-[11px] text-amber-400 bg-amber-400/10 border border-amber-400/20 rounded px-2 py-1.5">
+        <div className="flex items-start gap-1.5 text-[11px] text-sig-x bg-sig-x/10 border-l-[3px] border-sig-x rounded-r-suite px-2 py-1.5">
           <AlertTriangle size={12} className="shrink-0 mt-px" />
           <span>{parseError}</span>
         </div>
@@ -278,10 +282,10 @@ export default function ComponentsPanel({ onClose, focusChipId, board }) {
   const atCap = components.length >= MAX_COMPONENTS;
 
   return (
-    <div className="absolute top-2 right-2 bottom-2 w-[360px] bg-panel border border-edge rounded-lg shadow-xl flex flex-col z-30 overflow-hidden">
+    <div className="absolute top-0 right-0 bottom-0 w-[360px] max-w-full bg-elevated border-l border-edge shadow-[-4px_0_15px_#00000015] flex flex-col z-30 overflow-hidden">
       {/* Header */}
-      <div className="h-9 shrink-0 flex items-center justify-between px-3 border-b border-edge">
-        <span className="text-[13px] font-semibold text-text-secondary">
+      <div className="min-h-[31px] shrink-0 flex items-center justify-between px-[9px] bg-base border-b border-rule">
+        <span className="text-[13px] font-medium text-text-primary">
           Components{components.length ? ` (${components.length}/${MAX_COMPONENTS})` : ''}
         </span>
         <button onClick={onClose} className="text-text-muted hover:text-text-primary">
@@ -321,7 +325,7 @@ export default function ComponentsPanel({ onClose, focusChipId, board }) {
 
             {/* Expanded editor */}
             {expandedId === chip.id && (
-              <div className="ml-5 mt-1.5 p-3 bg-elevated border border-edge rounded-lg">
+              <div className="ml-5 mt-1.5 p-3 bg-panel border border-edge rounded-suite">
                 <ChipEditor
                   chip={chip}
                   onSourceChange={(val) => handleSourceChange(chip.id, val)}
@@ -347,7 +351,7 @@ export default function ComponentsPanel({ onClose, focusChipId, board }) {
         <button
           onClick={() => setShowAddForm(true)}
           disabled={atCap}
-          className="m-2 flex items-center justify-center gap-1.5 py-1.5 rounded border border-dashed border-edge text-[12px] text-text-secondary hover:bg-hover disabled:opacity-40 disabled:cursor-not-allowed"
+          className="m-2 flex items-center justify-center gap-1.5 min-h-[28px] rounded-suite border border-dashed border-edge text-[12px] text-text-primary hover:bg-accent-bg disabled:opacity-40 disabled:cursor-not-allowed"
           title={atCap ? `Maximum ${MAX_COMPONENTS} chips reached` : 'Add a new custom chip'}
         >
           <Plus size={13} />

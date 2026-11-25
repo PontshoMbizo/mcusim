@@ -23,8 +23,9 @@ import { useSim } from "../../lib/simState";
 const CHIP_BODY_FILL    = "#111418";
 const CHIP_BORDER_COLOR = "#9ca3af"; // light-gray
 const CHIP_BORDER_WIDTH = 2;
-const CHIP_LABEL_COLOR  = COLORS.textPrimary;  // white
-const CHIP_NAME_COLOR   = COLORS.textSecondary;
+// Labels sit on the near-black body, so they stay light in both themes.
+const CHIP_LABEL_COLOR  = "#e5e9ee";
+const CHIP_NAME_COLOR   = "#a7b0bc";
 const CHIP_STUB_COLOR   = CHIP_BORDER_COLOR;
 const CHIP_PAD_FILL     = CHIP_BORDER_COLOR;
 const CHIP_PAD_SELECTED = COLORS.accent;
@@ -217,7 +218,7 @@ function ChipBody({
         fontSize="9"
         fill={CHIP_NAME_COLOR}
         className="select-none pointer-events-none"
-        style={{ fontFamily: "monospace" }}
+        style={{ fontFamily: "var(--font-mono), monospace" }}
       >
         {component.name}
       </text>
